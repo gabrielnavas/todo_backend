@@ -1,5 +1,5 @@
 import pgPromise from 'pg-promise'
-import env from 'main/configs/env'
+import env from '@/main/configs/env'
 
 // Initializing the library:
 const pgp = pgPromise()

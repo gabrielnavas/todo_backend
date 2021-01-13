@@ -1,4 +1,4 @@
-import { UserModelRepository } from '../models/user-model-repository'
+import { UserModelRepository } from '@/data/models/user-model-repository'
 
 export interface UserFindOneByEmailRepository {
   findByEmail(email: string): Promise<UserModelRepository>

@@ -1,17 +1,29 @@
-import { DbUserInsertOne } from 'data/usecases/db-user-insert-one'
+import { UserInsertOne } from '@/domain/usecases/user-insert-one'
 import { Request, Response } from 'express'
 
 export class SignupController {
   constructor (
-    private readonly dbUserInsertOne: DbUserInsertOne
+    private readonly dbUserInsertOne: UserInsertOne
   ) {}
 
-  handle (req: Request, res: Response) {
+  private checkDatas = (body: any): void => {
     const bodyDatas = ['name', 'email', 'password', 'passwordConfirmation']
     bodyDatas.forEach(attr => {
-      if (!req.body[attr]) throw new Error(`missing params ${attr}`)
+      if (!body[attr]) throw new Error(`missing params ${attr}`)
     })
-    const userModel = this.dbUserInsertOne.insert(req.body)
-    res.status(201).json(userModel)
+  }
+
+  handle = async (req: Request, res: Response) => {
+    try {
+      this.checkDatas(req.body)
+      const userModel = await this.dbUserInsertOne.insert(req.body)
+      if (!userModel) {
+        return res.status(400).json({ body: new Error('Email is exists').message })
+      }
+      res.status(201).json({ body: userModel })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ body: new Error('unexpected error').message })
+    }
   }
 }
