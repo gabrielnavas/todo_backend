@@ -22,7 +22,6 @@ export class SignupController {
       }
       res.status(201).json({ body: userModel })
     } catch (error) {
-      console.log(error)
       res.status(500).json({ body: new Error('unexpected error').message })
     }
   }
