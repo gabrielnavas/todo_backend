@@ -1,9 +1,9 @@
-import { AddUserAccount } from '@/domain/usecases/create-user-account'
+import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { Request, Response } from 'express'
 
 export class SignupController {
   constructor (
-    private readonly dbUserInsertOne: AddUserAccount
+    private readonly dbUserInsertOne: CreateUserAccount
   ) {}
 
   private checkDatas = (body: any): void => {
@@ -16,7 +16,7 @@ export class SignupController {
   handle = async (req: Request, res: Response) => {
     try {
       this.checkDatas(req.body)
-      const userModel = await this.dbUserInsertOne.insert(req.body)
+      const userModel = await this.dbUserInsertOne.createUser(req.body)
       if (!userModel) {
         return res.status(400).json({ body: new Error('Email is exists').message })
       }
