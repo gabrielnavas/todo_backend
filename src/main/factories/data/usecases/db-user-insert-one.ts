@@ -1,4 +1,4 @@
-import { DbUserInsertOne } from '@/data/usecases/db-user-insert-one'
+import { DbUserInsertOne } from '@/data/usecases/db-create-user-account'
 import { UserPostgreSQLRepository } from '@/infra/db/postgresql/repositories/user-repository'
 
 export const dbUserInsertOneFactory = () => {

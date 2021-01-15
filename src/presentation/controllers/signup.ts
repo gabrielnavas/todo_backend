@@ -1,9 +1,9 @@
-import { UserInsertOne } from '@/domain/usecases/user-insert-one'
+import { AddUserAccount } from '@/domain/usecases/create-user-account'
 import { Request, Response } from 'express'
 
 export class SignupController {
   constructor (
-    private readonly dbUserInsertOne: UserInsertOne
+    private readonly dbUserInsertOne: AddUserAccount
   ) {}
 
   private checkDatas = (body: any): void => {
