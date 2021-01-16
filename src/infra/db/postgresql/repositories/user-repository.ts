@@ -1,11 +1,10 @@
-import { UserModelRepository } from '@/data/models/user-model-repository'
-import { UserFindOneByEmailRepository } from '@/data/interfaces/find-one-user-by-email-repository'
-import { UserInsertOneRepository, UserInsertOneRepositoryParams } from '@/data/interfaces/insert-one-user-repository'
+import { FindOneUserByEmailRepository, InsertOneUserRepository } from '@/data/interfaces/'
 import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 
 export class UserPostgreSQLRepository
-implements UserInsertOneRepository, UserFindOneByEmailRepository {
-  async insertOne (params: UserInsertOneRepositoryParams): Promise<UserModelRepository> {
+implements InsertOneUserRepository, FindOneUserByEmailRepository {
+  async insertOne (params: InsertOneUserRepository.Params):
+    Promise<InsertOneUserRepository.Result> {
     const sql = `
       INSERT INTO public."user" (name, email, password)
       VALUES ($1, $2, $3)
@@ -17,7 +16,8 @@ implements UserInsertOneRepository, UserFindOneByEmailRepository {
     return userMRepository.rows[0]
   }
 
-  async findByEmail (email: string): Promise<UserModelRepository> {
+  async findByEmail (email: FindOneUserByEmailRepository.Params):
+    Promise<FindOneUserByEmailRepository.Result> {
     const sql = `
       SELECT id, name, email, password
       FROM public."user" 
@@ -26,6 +26,6 @@ implements UserInsertOneRepository, UserFindOneByEmailRepository {
     const userMRepository = await PGHelper
       .getPool()
       .query(sql, [email])
-    return userMRepository.rows[0]
+    return userMRepository.rowCount > 0 ? userMRepository.rows[0] : null
   }
 }
