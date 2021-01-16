@@ -1,9 +1,7 @@
-import { Validation } from '@/validation/protocols/validation'
 import { DbCreateUserAccount } from '@/data/usecases/db-create-user-account'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { FindOneUserByEmailRepository, InsertOneUserRepository } from '@/data/interfaces'
 import { Hasher } from '@/data/interfaces/hasher'
-import { ValidationSpy } from '../../mocks/mock-validation'
 
 const makeUserRepository = () => {
   class UserRepositorySpy implements
@@ -43,7 +41,6 @@ const makeHasherSpy = (): Hasher => {
 
 interface SutTypes {
   sut: CreateUserAccount
-  validationCompositeSpy: Validation
   hasherSpy: Hasher
   userRepositorySpy: (FindOneUserByEmailRepository & InsertOneUserRepository)
 }
@@ -51,61 +48,19 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const userRepositorySpy = makeUserRepository()
   const hasherSpy = makeHasherSpy()
-  const validationCompositeSpy = new ValidationSpy()
   const sut = new DbCreateUserAccount(
-    validationCompositeSpy,
     hasherSpy,
     userRepositorySpy,
     userRepositorySpy
   )
   return {
     sut,
-    validationCompositeSpy,
     hasherSpy,
     userRepositorySpy
   }
 }
 
 describe('CreateUserAccount', () => {
-  test('should calls validation with correct params', async () => {
-    const { sut, validationCompositeSpy: validationComposite } = makeSut()
-    const userParams = {
-      email: 'any_email',
-      name: 'any_name',
-      password: 'any_password'
-    }
-    const validationCompositeSpy = jest.spyOn(validationComposite, 'validate')
-    await sut.createUser(userParams)
-    expect(validationCompositeSpy).toHaveBeenCalledWith(userParams)
-  })
-
-  test('should return throw if validation throws', async () => {
-    const { sut, validationCompositeSpy: validationComposite } = makeSut()
-    jest.spyOn(validationComposite, 'validate').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const userParams = {
-      email: 'any_email',
-      name: 'any_name',
-      password: 'any_password'
-    }
-    const promise = sut.createUser(userParams)
-    expect(promise).rejects.toThrow()
-  })
-
-  test('should return a errors if validator return errors', async () => {
-    const { sut, validationCompositeSpy } = makeSut()
-    const error = new Error('name is small')
-    jest.spyOn(validationCompositeSpy, 'validate').mockReturnValueOnce(error)
-    const userParams = {
-      email: 'any_email',
-      name: 'ga',
-      password: 'any_password'
-    }
-    const result = await sut.createUser(userParams)
-    expect(result).toBe(null)
-  })
-
   test('should call hasher with correct password', async () => {
     const { sut, hasherSpy: hasher } = makeSut()
     const hasherSpy = jest.spyOn(hasher, 'hash')

@@ -1,4 +1,4 @@
-import { HttpResponse } from '@/../tests/presentation/interfaces'
+import { HttpResponse } from '@/presentation/interfaces'
 
 export const httpResponseOk = (body: any): HttpResponse => ({
   statusCode: 200,

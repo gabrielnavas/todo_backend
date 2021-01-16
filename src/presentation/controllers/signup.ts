@@ -2,7 +2,7 @@ import {
   Controller,
   HttpRequest,
   HttpResponse
-} from '@/../tests/presentation/interfaces'
+} from '@/presentation/interfaces'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { Validation } from '@/validation/protocols/validation'
 import {
@@ -10,6 +10,7 @@ import {
   httpResponseOk,
   httpResponseServerError
 } from '../helpers/http-helper'
+import { EmailInUseError } from '../errors/email-in-use-error'
 
 export class SignUpController implements Controller {
   constructor (
@@ -23,7 +24,7 @@ export class SignUpController implements Controller {
       if (error) return httpResponseBadRequest(error)
       const { passwordConfirmation, ...userParams } = httpRequest.body
       const userCreatedOk = await this.userInsertOne.createUser(userParams)
-      if (!userCreatedOk) return httpResponseBadRequest(new Error())
+      if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
       return httpResponseOk({ ok: 'ok' })
     } catch (error) {
       return httpResponseServerError(error)

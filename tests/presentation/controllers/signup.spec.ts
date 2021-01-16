@@ -5,8 +5,10 @@ import {
   httpResponseServerError
 } from '@/presentation/helpers/http-helper'
 import { Validation } from '@/validation/protocols/validation'
-import { ValidationSpy } from '../../mocks/mock-validation'
-import { Controller, HttpRequest } from '../interfaces'
+import { ValidationSpy } from '../mocks/mock-validation'
+import { Controller, HttpRequest } from '../../../src/presentation/interfaces'
+import { MissingParamError } from '@/presentation/errors/missing-param-error'
+import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 
 type TypeSut = {
   sut: Controller
@@ -52,17 +54,16 @@ describe('SignUpController', () => {
 
   test('should return 400 if validations fail', async () => {
     const { sut, validationSpy } = makeSut()
-    jest.spyOn(validationSpy, 'validate').mockReturnValueOnce(new Error())
+    jest.spyOn(validationSpy, 'validate').mockReturnValueOnce(new MissingParamError('name'))
     const httpRequest: HttpRequest = {
       body: {
-        name: 'any_name',
         email: 'any_name',
         password: 'any_name',
         passwordConfirmation: 'any_name'
       }
     }
     const response = await sut.handle(httpRequest)
-    expect(response).toEqual(httpResponseBadRequest(new Error()))
+    expect(response).toEqual(httpResponseBadRequest(new MissingParamError('name')))
   })
 
   test('should call CreateUserAccount with correct params', async () => {
@@ -82,9 +83,10 @@ describe('SignUpController', () => {
   })
 
   test('should return 500 if CreateUserAccount throws', async () => {
+    const anyError = new Error()
     const { sut, createUserAccountSpy } = makeSut()
     jest.spyOn(createUserAccountSpy, 'createUser').mockImplementationOnce(async () => {
-      throw new Error()
+      throw anyError
     })
     const httpRequest = {
       body: {
@@ -95,7 +97,7 @@ describe('SignUpController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseServerError(new Error()))
+    expect(httpResponse).toEqual(httpResponseServerError(anyError))
   })
 
   test('should return 400 if CreateUserAccount emails exists', async () => {
@@ -110,6 +112,6 @@ describe('SignUpController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseBadRequest(new Error()))
+    expect(httpResponse).toEqual(httpResponseBadRequest(new EmailInUseError()))
   })
 })
