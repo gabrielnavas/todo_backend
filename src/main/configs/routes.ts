@@ -1,4 +1,4 @@
-import express, {Express} from 'express'
+import express, { Express } from 'express'
 import auth from '../routes/auth'
 
 export default (app: Express) => {
