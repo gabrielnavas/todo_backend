@@ -1,5 +1,3 @@
-import { UserAccountModel } from '@/domain/models/user-account'
-
 export interface CreateUserAccount {
   createUser(params: CreateUserAccount.Params): Promise<CreateUserAccount.Result>
 }
@@ -10,5 +8,5 @@ export namespace CreateUserAccount{
     email: string
     password: string
   }
-  export type Result = UserAccountModel
+  export type Result = Boolean
 }

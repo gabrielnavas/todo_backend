@@ -3,15 +3,7 @@ import { DbCreateUserAccount } from '@/data/usecases/db-create-user-account'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { FindOneUserByEmailRepository, InsertOneUserRepository } from '@/data/interfaces'
 import { Hasher } from '@/data/interfaces/hasher'
-
-const makeValidationComposite = () => {
-  class ValidationCompositeSpy implements Validation {
-    validate (input: Validation.Params): Validation.Result {
-      return null
-    }
-  }
-  return new ValidationCompositeSpy()
-}
+import { ValidationSpy } from '../../mocks/mock-validation'
 
 const makeUserRepository = () => {
   class UserRepositorySpy implements
@@ -59,7 +51,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const userRepositorySpy = makeUserRepository()
   const hasherSpy = makeHasherSpy()
-  const validationCompositeSpy = makeValidationComposite()
+  const validationCompositeSpy = new ValidationSpy()
   const sut = new DbCreateUserAccount(
     validationCompositeSpy,
     hasherSpy,
@@ -74,7 +66,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('', () => {
+describe('CreateUserAccount', () => {
   test('should calls validation with correct params', async () => {
     const { sut, validationCompositeSpy: validationComposite } = makeSut()
     const userParams = {
