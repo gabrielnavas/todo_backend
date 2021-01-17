@@ -10,12 +10,6 @@ import { Controller, HttpRequest } from '../../../src/presentation/interfaces'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 
-type TypeSut = {
-  sut: Controller
-  validationSpy: Validation,
-  createUserAccountSpy: CreateUserAccount
-}
-
 const makeCreateUserAccount = (): CreateUserAccount => {
   class CreateUserAccountSpy implements CreateUserAccount {
     async createUser (params: CreateUserAccount.Params): Promise<CreateUserAccount.Result> {
@@ -23,6 +17,12 @@ const makeCreateUserAccount = (): CreateUserAccount => {
     }
   }
   return new CreateUserAccountSpy()
+}
+
+type TypeSut = {
+  sut: Controller
+  validationSpy: Validation,
+  createUserAccountSpy: CreateUserAccount
 }
 
 const makeSut = (): TypeSut => {
