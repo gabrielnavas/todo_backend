@@ -18,7 +18,7 @@ export class DbAuthentication implements Authentication {
     const isPasswordsEquals = await this.checkPasswordsHashs.compare(params.password, userModelFound.password)
     if (!isPasswordsEquals) return null
     const token = await this.createToken.encrypt(`${userModelFound.id}`)
-    const insertResp = await this.insertToken.insertOne(token)
+    const insertResp = await this.insertToken.insertOne({ idUser: userModelFound.id, token })
     return {
       token: insertResp.token,
       userName: userModelFound.name

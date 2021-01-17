@@ -3,14 +3,16 @@ import { UserPostgreSQLRepository } from '@/infra/db/postgresql/repositories/use
 
 describe('UserPostgreSQLRepository', () => {
   beforeEach(async () => {
+    await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
   afterEach(async () => {
+    await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
-  test('should call insertOne() with correct InsertOneUserRepository.Params', async () => {
+  test('should call insertOne() with correct InsertOneUserRepository.Params and returns InsertOneUserRepository.Result', async () => {
     const sut = new UserPostgreSQLRepository()
     const params = {
       name: 'any_name',

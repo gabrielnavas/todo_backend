@@ -26,6 +26,7 @@ const makeInsertOneUserTokenAccess = (): InsertOneUserTokenAccessRepository => {
   class InsertOneUserTokenAccessSpy implements InsertOneUserTokenAccessRepository {
     insertOne = async (params: InsertOneUserTokenAccessRepository.Params): Promise<InsertOneUserTokenAccessRepository.Result> => {
       return {
+        id: 1,
         createdAt: new Date(),
         token
       }
@@ -184,7 +185,7 @@ describe('DbAuthentication', () => {
       password: 'any_other_password'
     }
     await sut.authenticate(authParams)
-    expect(insertOneUserTokenAccessSpy).toHaveBeenCalledWith(token)
+    expect(insertOneUserTokenAccessSpy).toHaveBeenCalledWith({ idUser: 1, token })
   })
 
   test('should return a token and userName', async () => {

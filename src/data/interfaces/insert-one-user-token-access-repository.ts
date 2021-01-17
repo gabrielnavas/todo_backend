@@ -4,6 +4,6 @@ export interface InsertOneUserTokenAccessRepository {
 }
 
 export namespace InsertOneUserTokenAccessRepository {
-  export type Params = string
-  export type Result = {token: string, createdAt: Date}
+  export type Params = {idUser: number, token:string}
+  export type Result = {id: number, token: string, createdAt: Date}
 }
