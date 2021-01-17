@@ -24,5 +24,8 @@ export default {
   server_port: process.env.SERVER_PORT || 3030,
 
   // database configs
-  ...makeDataBaseConfig()
+  ...makeDataBaseConfig(),
+
+  // encrypter key
+  jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret'
 }

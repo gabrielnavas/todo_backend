@@ -1,2 +1,6 @@
+export * from './encrypter'
 export * from './find-one-user-by-email-repository'
+export * from './hasher'
+export * from './hasher-comparer'
 export * from './insert-one-user-repository'
+export * from './insert-one-user-token-access-repository'
