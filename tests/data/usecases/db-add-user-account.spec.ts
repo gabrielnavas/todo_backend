@@ -82,7 +82,9 @@ describe('CreateUserAccount', () => {
 
   test('should return throw if hasher throws', async () => {
     const { sut, hasherSpy: hasher } = makeSut()
-    jest.spyOn(hasher, 'hash').mockRejectedValueOnce(new Error())
+    jest.spyOn(hasher, 'hash').mockImplementationOnce(() => {
+      throw new Error()
+    })
     const userParams = {
       email: 'any_email',
       name: 'any_name',
