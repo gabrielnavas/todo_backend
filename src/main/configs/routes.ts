@@ -1,8 +1,8 @@
 import express, { Express } from 'express'
-import auth from '../routes/auth'
+import authentication from '../routes/authentication-route'
 
 export default (app: Express) => {
   const router = express.Router()
-  auth(router)
+  authentication(router)
   app.use('/api', router)
 }

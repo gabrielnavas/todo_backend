@@ -2,12 +2,12 @@ import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 import { UserPostgreSQLRepository } from '@/infra/db/postgresql/repositories/user-repository'
 
 describe('UserPostgreSQLRepository', () => {
-  beforeEach(() => {
-    PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+  beforeEach(async () => {
+    await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
-  afterEach(() => {
-    PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+  afterEach(async () => {
+    await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
   test('should call insertOne() with correct InsertOneUserRepository.Params', async () => {

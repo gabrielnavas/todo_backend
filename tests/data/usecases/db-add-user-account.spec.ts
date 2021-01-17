@@ -8,12 +8,7 @@ const makeUserRepository = () => {
     FindOneUserByEmailRepository,
     InsertOneUserRepository {
     async findByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
-      return {
-        id: 1,
-        email: 'any_email',
-        name: 'any_anme',
-        password: 'any_password'
-      }
+      return null
     }
 
     async insertOne (params: InsertOneUserRepository.Params): Promise<InsertOneUserRepository.Result> {
@@ -123,9 +118,16 @@ describe('CreateUserAccount', () => {
     expect(promise).rejects.toThrow()
   })
 
-  test('should return null of FindOneUserByEmailRepository if email exists', async () => {
+  test('should return null if email exists', async () => {
     const { sut, userRepositorySpy: userRepository } = makeSut()
-    jest.spyOn(userRepository, 'findByEmail').mockReturnValueOnce(null)
+    jest.spyOn(userRepository, 'findByEmail').mockImplementationOnce(async () => {
+      return Promise.resolve({
+        id: 1,
+        email: 'any_email',
+        name: 'any_name',
+        password: 'any_password'
+      })
+    })
     const userParams = {
       email: 'any_email',
       name: 'any_name',

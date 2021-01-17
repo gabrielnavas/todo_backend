@@ -1,7 +1,10 @@
-import { DbUserInsertOne } from '@/data/usecases/db-create-user-account'
+import { DbCreateUserAccount } from '@/data/usecases/db-create-user-account'
+import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 import { UserPostgreSQLRepository } from '@/infra/db/postgresql/repositories/user-repository'
 
 export const dbUserInsertOneFactory = () => {
   const userRepository = new UserPostgreSQLRepository()
-  return new DbUserInsertOne(userRepository)
+  const salt = 12
+  const bCryptAdapter = new BcryptAdapter(salt)
+  return new DbCreateUserAccount(bCryptAdapter, userRepository, userRepository)
 }

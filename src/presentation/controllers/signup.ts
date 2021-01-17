@@ -4,7 +4,7 @@ import {
   HttpResponse
 } from '@/presentation/interfaces'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
-import { Validation } from '@/validation/protocols/validation'
+import { Validation } from '@/presentation/interfaces/validation'
 import {
   httpResponseBadRequest,
   httpResponseOk,
@@ -25,7 +25,7 @@ export class SignUpController implements Controller {
       const { passwordConfirmation, ...userParams } = httpRequest.body
       const userCreatedOk = await this.userInsertOne.createUser(userParams)
       if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
-      return httpResponseOk({ ok: 'ok' })
+      return httpResponseOk()
     } catch (error) {
       return httpResponseServerError(error)
     }

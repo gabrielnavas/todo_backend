@@ -1,3 +1,3 @@
-import express from 'express'
+import { json } from 'express'
 
-export const bodyParser = express.json()
+export const bodyParser = json()

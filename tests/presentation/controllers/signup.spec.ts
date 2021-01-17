@@ -4,7 +4,7 @@ import {
   httpResponseBadRequest,
   httpResponseServerError
 } from '@/presentation/helpers/http-helper'
-import { Validation } from '@/validation/protocols/validation'
+import { Validation } from '@/presentation/interfaces/validation'
 import { ValidationSpy } from '../mocks/mock-validation'
 import { Controller, HttpRequest } from '../../../src/presentation/interfaces'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'

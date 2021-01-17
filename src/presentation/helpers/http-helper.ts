@@ -1,6 +1,6 @@
 import { HttpResponse } from '@/presentation/interfaces'
 
-export const httpResponseOk = (body: any): HttpResponse => ({
+export const httpResponseOk = (body?: any): HttpResponse => ({
   statusCode: 200,
   body
 })
