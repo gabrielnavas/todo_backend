@@ -49,6 +49,28 @@ CREATE TABLE public."user" (
 ALTER TABLE public."user" OWNER TO postgres;
 -- ddl-end --
 
+-- object: public.user_token_access | type: TABLE --
+-- DROP TABLE IF EXISTS public.user_token_access CASCADE;
+CREATE TABLE public.user_token_access (
+	id serial NOT NULL,
+	id_user integer NOT NULL,
+	token varchar(8192) NOT NULL,
+	created_at date NOT NULL,
+	invalid_at date,
+	CONSTRAINT user_token_access_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE public.user_token_access OWNER TO postgres;
+-- ddl-end --
+
+-- object: user_fk | type: CONSTRAINT --
+-- ALTER TABLE public.user_token_access DROP CONSTRAINT IF EXISTS user_fk CASCADE;
+ALTER TABLE public.user_token_access ADD CONSTRAINT user_fk FOREIGN KEY (id_user)
+REFERENCES public."user" (id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
 -- object: "grant_CU_eb94f049ac" | type: PERMISSION --
 GRANT CREATE,USAGE
    ON SCHEMA public
