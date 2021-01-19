@@ -21,7 +21,8 @@ export class DbAuthentication implements Authentication {
     const insertResp = await this.insertToken.insertOne({ idUser: userModelFound.id, token })
     return {
       token: insertResp.token,
-      userName: userModelFound.name
+      userName: userModelFound.name,
+      email: userModelFound.email
     }
   }
 }

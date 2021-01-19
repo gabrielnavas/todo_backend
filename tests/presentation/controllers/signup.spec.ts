@@ -27,20 +27,18 @@ type TypeSut = {
   validationSpy: Validation,
   createUserAccountSpy: CreateUserAccount
   authenticationSpy: Authentication
-  variables: {token: string}
 }
 
 const makeSut = (): TypeSut => {
   const validationSpy = new ValidationSpy()
   const createUserAccountSpy = makeCreateUserAccount()
-  const { sut: authenticationSpy, variables } = makeAuthenticationMock()
+  const { sut: authenticationSpy } = makeAuthenticationMock()
   const sut = new SignUpController(validationSpy, createUserAccountSpy, authenticationSpy)
   return {
     sut,
     validationSpy,
     createUserAccountSpy,
-    authenticationSpy,
-    variables: { token: variables.token }
+    authenticationSpy
   }
 }
 
@@ -157,19 +155,20 @@ describe('SignUpController', () => {
   })
 
   test('should return 200 a token and userName if ok', async () => {
-    const { sut, variables } = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
+        email: 'any_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
       }
     }
     const httpResponse = await sut.handle(httpRequest)
     const bodyReturn = {
-      token: variables.token,
-      userName: httpRequest.body.name
+      token: 'any_token',
+      userName: httpRequest.body.name,
+      email: httpRequest.body.email
     } as Authentication.Result
     expect(httpResponse).toEqual(httpResponseOk(bodyReturn))
   })

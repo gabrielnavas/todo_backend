@@ -2,16 +2,13 @@ import { Encrypter, FindOneUserByEmailRepository, HashComparer, InsertOneUserTok
 import { DbAuthentication } from '@/data/usecases/db-authentication'
 import { Authentication } from '@/domain/usecases/authentication'
 
-const userName = 'any_name'
-const token = 'any_token'
-
 const makeUserRepository = () => {
   class UserRepositorySpy implements FindOneUserByEmailRepository {
     async findByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
       return {
         id: 1,
-        email: 'any_email',
-        name: userName,
+        email,
+        name: 'any_name',
         password: 'any_password_hashed'
       }
     }
@@ -25,7 +22,7 @@ const makeInsertOneUserTokenAccess = (): InsertOneUserTokenAccessRepository => {
       return {
         id: 1,
         createdAt: new Date(),
-        token
+        token: 'any_token'
       }
     }
   }
@@ -44,7 +41,7 @@ const makeHashComparer = (): HashComparer => {
 const makeEncrypter = () => {
   class EncrypterSpy implements Encrypter {
     encrypt = async (plaintext: string): Promise<string> => {
-      return token
+      return 'any_token'
     }
   }
   return new EncrypterSpy()
@@ -56,7 +53,6 @@ type TypeSut = {
   encrypterSpy: Encrypter
   insertOneUserTokenAccessSpy: InsertOneUserTokenAccessRepository
   sut: Authentication
-  variables: {userName: string, token: string}
 }
 
 export const makeAuthenticationMock = (): TypeSut => {
@@ -75,7 +71,6 @@ export const makeAuthenticationMock = (): TypeSut => {
     checkExistsUserByEmailSpy,
     hashComparerSpy,
     encrypterSpy,
-    insertOneUserTokenAccessSpy,
-    variables: { userName, token }
+    insertOneUserTokenAccessSpy
   }
 }

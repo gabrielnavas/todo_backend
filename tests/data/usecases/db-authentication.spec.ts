@@ -97,24 +97,28 @@ describe('DbAuthentication', () => {
   })
 
   test('should call InsertOneUserTokenAccess with correct params', async () => {
-    const { sut, insertOneUserTokenAccessSpy: insertOneUserTokenAccess, variables } = makeAuthenticationMock()
+    const { sut, insertOneUserTokenAccessSpy: insertOneUserTokenAccess } = makeAuthenticationMock()
     const insertOneUserTokenAccessSpy = jest.spyOn(insertOneUserTokenAccess, 'insertOne')
     const authParams = {
       email: 'any_email',
       password: 'any_other_password'
     }
     await sut.authenticate(authParams)
-    expect(insertOneUserTokenAccessSpy).toHaveBeenCalledWith({ idUser: 1, token: variables.token })
+    expect(insertOneUserTokenAccessSpy).toHaveBeenCalledWith({ idUser: 1, token: 'any_token' })
   })
 
-  test('should return a token and userName', async () => {
-    const { sut, variables } = makeAuthenticationMock()
+  test('should return a token, userName and email', async () => {
+    const { sut } = makeAuthenticationMock()
 
     const authParams = {
       email: 'any_email',
       password: 'any_other_password'
     }
     const authResult = await sut.authenticate(authParams)
-    expect(authResult).toEqual({ token: variables.token, userName: variables.userName })
+    expect(authResult).toEqual({
+      token: 'any_token',
+      userName: 'any_name',
+      email: 'any_email'
+    })
   })
 })

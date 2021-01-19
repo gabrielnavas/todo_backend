@@ -4,5 +4,5 @@ export interface Authentication {
 
 export namespace Authentication {
   export type Params = {email: string, password: string}
-  export type Result = {token: string, userName: string}
+  export type Result = {token: string, userName: string, email: string}
 }
