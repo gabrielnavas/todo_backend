@@ -25,7 +25,7 @@ export class SignUpController implements Controller {
       const { passwordConfirmation, ...userParams } = httpRequest.body
       const userCreatedOk = await this.userInsertOne.createUser(userParams)
       if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
-      return httpResponseOk()
+      return httpResponseOk({ ok: 'ok' })
     } catch (error) {
       return httpResponseServerError(error)
     }
