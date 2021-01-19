@@ -11,11 +11,13 @@ import {
   httpResponseServerError
 } from '../helpers/http-helper'
 import { EmailInUseError } from '../errors/email-in-use-error'
+import { Authentication } from '@/domain/usecases/authentication'
 
 export class SignUpController implements Controller {
   constructor (
     private readonly validateBody: Validation,
-    private readonly userInsertOne: CreateUserAccount
+    private readonly userInsertOne: CreateUserAccount,
+    private readonly getAuthentication: Authentication
   ) {}
 
   handle = async (httpRequest: HttpRequest): Promise<HttpResponse> => {
@@ -25,7 +27,9 @@ export class SignUpController implements Controller {
       const { passwordConfirmation, ...userParams } = httpRequest.body
       const userCreatedOk = await this.userInsertOne.createUser(userParams)
       if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
-      return httpResponseOk({ ok: 'ok' })
+      const { email, password } = httpRequest.body
+      const authResult = await this.getAuthentication.authenticate({ email, password })
+      return httpResponseOk(authResult)
     } catch (error) {
       return httpResponseServerError(error)
     }

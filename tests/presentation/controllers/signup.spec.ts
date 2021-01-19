@@ -2,6 +2,7 @@ import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { SignUpController } from '@/presentation/controllers/signup'
 import {
   httpResponseBadRequest,
+  httpResponseOk,
   httpResponseServerError
 } from '@/presentation/helpers/http-helper'
 import { Validation } from '@/presentation/interfaces/validation'
@@ -9,6 +10,8 @@ import { ValidationSpy } from '../mocks/mock-validation'
 import { Controller, HttpRequest } from '../../../src/presentation/interfaces'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
+import { Authentication } from '@/domain/usecases/authentication'
+import { makeAuthenticationMock } from '../../data/mocks/mock-db-authentication'
 
 const makeCreateUserAccount = (): CreateUserAccount => {
   class CreateUserAccountSpy implements CreateUserAccount {
@@ -23,16 +26,21 @@ type TypeSut = {
   sut: Controller
   validationSpy: Validation,
   createUserAccountSpy: CreateUserAccount
+  authenticationSpy: Authentication
+  variables: {token: string}
 }
 
 const makeSut = (): TypeSut => {
   const validationSpy = new ValidationSpy()
   const createUserAccountSpy = makeCreateUserAccount()
-  const sut = new SignUpController(validationSpy, createUserAccountSpy)
+  const { sut: authenticationSpy, variables } = makeAuthenticationMock()
+  const sut = new SignUpController(validationSpy, createUserAccountSpy, authenticationSpy)
   return {
     sut,
     validationSpy,
-    createUserAccountSpy
+    createUserAccountSpy,
+    authenticationSpy,
+    variables: { token: variables.token }
   }
 }
 
@@ -113,5 +121,56 @@ describe('SignUpController', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseBadRequest(new EmailInUseError()))
+  })
+
+  test('should call Authenticationer with correct params', async () => {
+    const { sut, authenticationSpy: authentication } = makeSut()
+    const authenticationSpy = jest.spyOn(authentication, 'authenticate')
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_name',
+        password: 'any_name',
+        passwordConfirmation: 'any_name'
+      }
+    }
+    const { email, password } = httpRequest.body
+    await sut.handle(httpRequest)
+    expect(authenticationSpy).toHaveBeenCalledWith({ email, password })
+  })
+
+  test('should return 500 throw Authenticationer if throws', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    jest.spyOn(authenticationSpy, 'authenticate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_name',
+        password: 'any_name',
+        passwordConfirmation: 'any_name'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(httpResponseServerError(new Error()))
+  })
+
+  test('should return 200 a token and userName if ok', async () => {
+    const { sut, variables } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_name',
+        password: 'any_name',
+        passwordConfirmation: 'any_name'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    const bodyReturn = {
+      token: variables.token,
+      userName: httpRequest.body.name
+    } as Authentication.Result
+    expect(httpResponse).toEqual(httpResponseOk(bodyReturn))
   })
 })

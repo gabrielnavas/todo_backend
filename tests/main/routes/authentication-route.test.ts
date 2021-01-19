@@ -14,7 +14,7 @@ describe('POST /login', () => {
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
-  test('should return 200 on login with correct params', async () => {
+  test('should return 200 on login with correct params', async done => {
     await request(app)
       .post('/api/signup')
       .send({
@@ -31,6 +31,14 @@ describe('POST /login', () => {
         password: '123456'
       })
       .expect(200)
+      .then(res => {
+        expect(res.body).toBeTruthy()
+        expect(res.body.token).toBeTruthy()
+        expect(typeof res.body.token).toBe('string')
+        expect(res.body.token.length).toBe(120)
+        expect(res.body.userName).toBe('Gabriel Navas')
+        done()
+      })
   })
 
   test('should return 400 on login is incorrect', async () => {
