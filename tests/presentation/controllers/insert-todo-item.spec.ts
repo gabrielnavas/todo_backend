@@ -159,20 +159,4 @@ describe('InsertTodoItemController', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk())
   })
-
-  // test('should call decryptor with correct user access token ',async () => {
-  //   const { sut, decryptorSpy } = makeSut()
-  //   jest.spyOn(decryptorSpy, 'decrypt')
-  //     .mockReturnValueOnce('any_token_decrypted')
-  //   const httpRequest: HttpRequest = {
-  //     body: {
-  //       token: 'any_token',
-  //       idNameTodoArea: 'any_id_todo_area',
-  //       title: 'any_title',
-  //       description: 'any_description'
-  //     }
-  //   }
-  //   await sut.handle(httpRequest)
-  //   expect(decryptorSpy).toHaveBeenCalledWith(httpRequest.body.token)
-  // })
 })

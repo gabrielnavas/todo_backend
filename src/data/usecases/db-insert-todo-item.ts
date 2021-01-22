@@ -1,0 +1,18 @@
+import { InsertTodoItem } from '@/domain/usecases/insert-todo-item'
+import { Decrypter } from '../interfaces/decrypter'
+import { FindOneUserByIdRepository } from '../interfaces/find-one-user-by-id-repository'
+
+export class DbInsertTodoItem implements InsertTodoItem {
+  constructor (
+    private readonly decrypterToken: Decrypter,
+    private readonly verifyIfUserExists: FindOneUserByIdRepository
+  ) {}
+
+  async insertOne (params: InsertTodoItem.Params): Promise<InsertTodoItem.Result> {
+    const idUserDecrypted = await this.decrypterToken.decrypt(params.userAccess.token)
+    const idUserNumber = Number(idUserDecrypted)
+    const userFound = await this.verifyIfUserExists.findOne(idUserNumber)
+    if (!userFound) return false
+    return true
+  }
+}
