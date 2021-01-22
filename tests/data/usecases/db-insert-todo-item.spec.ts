@@ -13,7 +13,7 @@ const makeDecrypter = (): Decrypter => {
 
 const makeFindOneUserById = (): FindOneUserByIdRepository => {
   return new class FindOneUserByIdSpy implements FindOneUserByIdRepository {
-    async findOne (id: FindOneUserByIdRepository.Params): Promise<FindOneUserByIdRepository.Result> {
+    async findOneById (id: FindOneUserByIdRepository.Params): Promise<FindOneUserByIdRepository.Result> {
       return {
         id: 1,
         name: 'any_name',
@@ -91,7 +91,7 @@ describe('DbInsertTodoItem', () => {
 
   test('should call FindOneUserByIdRepository with correct params ', async () => {
     const { sut, findOneUserByIdRepositorySpy: findOneUserByIdRepository, decrypterSpy } = makeSut()
-    const findOneUserByIdRepositorySpy = jest.spyOn(findOneUserByIdRepository, 'findOne')
+    const findOneUserByIdRepositorySpy = jest.spyOn(findOneUserByIdRepository, 'findOneById')
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockReturnValueOnce(Promise.resolve(`${idUser}`))
@@ -105,7 +105,7 @@ describe('DbInsertTodoItem', () => {
 
   test('should return null if FindOneUserById return null (user not found) ', async () => {
     const { sut, findOneUserByIdRepositorySpy, decrypterSpy } = makeSut()
-    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne').mockReturnValueOnce(null)
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById').mockReturnValueOnce(null)
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockReturnValueOnce(Promise.resolve(`${idUser}`))
@@ -119,7 +119,7 @@ describe('DbInsertTodoItem', () => {
 
   test('should return throws if FindOneUserByIdRepository throws ', () => {
     const { sut, findOneUserByIdRepositorySpy, decrypterSpy } = makeSut()
-    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById')
       .mockRejectedValueOnce(new Error('any_error'))
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
@@ -138,7 +138,7 @@ describe('DbInsertTodoItem', () => {
       findOneUserByIdRepositorySpy,
       insertOneTodoItemRespositorySpy: insertOneTodoItemRespository
     } = makeSut()
-    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById')
       .mockReturnValueOnce(Promise.resolve({
         id: 1,
         email: 'any_email',
@@ -171,7 +171,7 @@ describe('DbInsertTodoItem', () => {
       findOneUserByIdRepositorySpy,
       insertOneTodoItemRespositorySpy
     } = makeSut()
-    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById')
       .mockReturnValueOnce(Promise.resolve({
         id: 1,
         email: 'any_email',
@@ -199,7 +199,7 @@ describe('DbInsertTodoItem', () => {
       sut,
       findOneUserByIdRepositorySpy
     } = makeSut()
-    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById')
       .mockReturnValueOnce(Promise.resolve({
         id: 1,
         email: 'any_email',

@@ -4,7 +4,7 @@ import { Authentication } from '@/domain/usecases/authentication'
 
 const makeUserRepository = () => {
   class UserRepositorySpy implements FindOneUserByEmailRepository {
-    async findByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
+    async findOneByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
       return {
         id: 1,
         email,

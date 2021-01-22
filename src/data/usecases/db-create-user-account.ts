@@ -10,7 +10,7 @@ export class DbCreateUserAccount implements CreateUserAccount {
   ) {}
 
   createUser = async (params: CreateUserAccount.Params): Promise<CreateUserAccount.Result> => {
-    const userFound = await this.checkEmailExists.findByEmail(params.email)
+    const userFound = await this.checkEmailExists.findOneByEmail(params.email)
     if (userFound) return null
     const passwordHashed = await this.hasherPasswordParam.hash(params.password)
     const user = await this.createNewUser.insertOne({ ...params, password: passwordHashed })

@@ -7,7 +7,7 @@ const makeUserRepository = () => {
   class UserRepositorySpy implements
     FindOneUserByEmailRepository,
     InsertOneUserRepository {
-    async findByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
+    async findOneByEmail (email: FindOneUserByEmailRepository.Params): Promise<FindOneUserByEmailRepository.Result> {
       return null
     }
 
@@ -96,7 +96,7 @@ describe('CreateUserAccount', () => {
 
   test('should call FindOneUserByEmailRepository with correct params', async () => {
     const { sut, userRepositorySpy: userRepository } = makeSut()
-    const userRepositorySpy = jest.spyOn(userRepository, 'findByEmail')
+    const userRepositorySpy = jest.spyOn(userRepository, 'findOneByEmail')
     const userParams = {
       email: 'any_email',
       name: 'any_name',
@@ -108,7 +108,7 @@ describe('CreateUserAccount', () => {
 
   test('should return throw if FindOneUserByEmailRepository with correct params', async () => {
     const { sut, userRepositorySpy: userRepository } = makeSut()
-    jest.spyOn(userRepository, 'findByEmail').mockImplementationOnce(() => {
+    jest.spyOn(userRepository, 'findOneByEmail').mockImplementationOnce(() => {
       throw new Error()
     })
     const userParams = {
@@ -122,7 +122,7 @@ describe('CreateUserAccount', () => {
 
   test('should return null if email exists', async () => {
     const { sut, userRepositorySpy: userRepository } = makeSut()
-    jest.spyOn(userRepository, 'findByEmail').mockImplementationOnce(async () => {
+    jest.spyOn(userRepository, 'findOneByEmail').mockImplementationOnce(async () => {
       return Promise.resolve({
         id: 1,
         email: 'any_email',

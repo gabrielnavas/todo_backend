@@ -3,7 +3,7 @@ import { makeAuthenticationMock } from '../mocks/mock-db-authentication'
 describe('DbAuthentication', () => {
   test('should call checkEmail with correct email', async () => {
     const { sut, checkExistsUserByEmailSpy: checkExistsUserByEmail } = makeAuthenticationMock()
-    const checkExistsUserByEmailSpySpy = jest.spyOn(checkExistsUserByEmail, 'findByEmail')
+    const checkExistsUserByEmailSpySpy = jest.spyOn(checkExistsUserByEmail, 'findOneByEmail')
     const authParams = {
       email: 'any_email',
       password: 'any_password'
@@ -14,7 +14,7 @@ describe('DbAuthentication', () => {
 
   test('should reject if checkEmail throws', () => {
     const { sut, checkExistsUserByEmailSpy } = makeAuthenticationMock()
-    jest.spyOn(checkExistsUserByEmailSpy, 'findByEmail').mockImplementationOnce(() => {
+    jest.spyOn(checkExistsUserByEmailSpy, 'findOneByEmail').mockImplementationOnce(() => {
       throw new Error()
     })
     const authParams = {
@@ -27,7 +27,7 @@ describe('DbAuthentication', () => {
 
   test('should return null if checkEmail return null', async () => {
     const { sut, checkExistsUserByEmailSpy } = makeAuthenticationMock()
-    jest.spyOn(checkExistsUserByEmailSpy, 'findByEmail').mockReturnValueOnce(null)
+    jest.spyOn(checkExistsUserByEmailSpy, 'findOneByEmail').mockReturnValueOnce(null)
     const authParams = {
       email: 'any_email',
       password: 'any_password'

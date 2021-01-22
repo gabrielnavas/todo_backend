@@ -13,7 +13,7 @@ export class DbAuthentication implements Authentication {
   ) {}
 
   authenticate = async (params: Authentication.Params): Promise<Authentication.Result> => {
-    const userModelFound = await this.checkExistsUserByEmail.findByEmail(params.email)
+    const userModelFound = await this.checkExistsUserByEmail.findOneByEmail(params.email)
     if (!userModelFound) return null
     const isPasswordsEquals = await this.checkPasswordsHashs.compare(params.password, userModelFound.password)
     if (!isPasswordsEquals) return null
