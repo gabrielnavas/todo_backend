@@ -6,21 +6,22 @@ import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from 
 import { Controller, HttpRequest, Validation } from '@/presentation/interfaces'
 import { ValidationSpy } from '../mocks/mock-validation'
 
-type TypeSut = {
-  sut: Controller
-  validationSpy: Validation,
-  authenticationSpy: Authentication
-}
-
 const makeAuthentication = () => {
   return new class AuthenticationSpy implements Authentication {
     async authenticate (params: Authentication.Params): Promise<Authentication.Result> {
       return {
         token: 'any_token',
-        userName: 'any_name'
+        userName: 'any_name',
+        email: 'any_email'
       }
     }
   }()
+}
+
+type TypeSut = {
+  sut: Controller
+  validationSpy: Validation,
+  authenticationSpy: Authentication
 }
 
 const makeSut = (): TypeSut => {
@@ -113,7 +114,8 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk({
       token: 'any_token',
-      userName: 'any_name'
+      userName: 'any_name',
+      email: 'any_email'
     }))
   })
 })
