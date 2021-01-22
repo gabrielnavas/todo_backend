@@ -1,5 +1,6 @@
 import { Decrypter } from '@/data/interfaces/decrypter'
 import { FindOneUserByIdRepository } from '@/data/interfaces/find-one-user-by-id-repository'
+import { InsertOneTodoItemRespository } from '@/data/interfaces/insert-one-todo-item-repository'
 import { DbInsertTodoItem } from '@/data/usecases/db-insert-todo-item'
 
 const makeDecrypter = (): Decrypter => {
@@ -23,21 +24,44 @@ const makeFindOneUserById = (): FindOneUserByIdRepository => {
   }()
 }
 
+const makeInsertOneTodoItemRespository = (): InsertOneTodoItemRespository => {
+  return new class InsertOneTodoItemRespositorySpy implements InsertOneTodoItemRespository {
+    async insertOne (params: InsertOneTodoItemRespository.Params): Promise<InsertOneTodoItemRespository.Result> {
+      return {
+        todoItem: {
+          id: 1,
+          idNameTodoArea: 'todo',
+          title: 'any_title',
+          description: 'any_descrption'
+        },
+        user: { id: 1 }
+      }
+    }
+  }()
+}
+
 type TypesSut = {
   sut: DbInsertTodoItem
   decrypterSpy: Decrypter
-  findOneUserByIdSpy: FindOneUserByIdRepository
+  findOneUserByIdRepositorySpy: FindOneUserByIdRepository
+  insertOneTodoItemRespositorySpy: InsertOneTodoItemRespository
 
 }
 
 const makeSut = (): TypesSut => {
   const decrypterSpy = makeDecrypter()
-  const findOneUserByIdSpy = makeFindOneUserById()
-  const sut = new DbInsertTodoItem(decrypterSpy, findOneUserByIdSpy)
+  const findOneUserByIdRepositorySpy = makeFindOneUserById()
+  const insertOneTodoItemRespositorySpy = makeInsertOneTodoItemRespository()
+  const sut = new DbInsertTodoItem(
+    decrypterSpy,
+    findOneUserByIdRepositorySpy,
+    insertOneTodoItemRespositorySpy
+  )
   return {
     sut,
     decrypterSpy,
-    findOneUserByIdSpy
+    findOneUserByIdRepositorySpy,
+    insertOneTodoItemRespositorySpy
   }
 }
 
@@ -46,7 +70,7 @@ describe('DbInsertTodoItem', () => {
     const { sut, decrypterSpy: decrypter } = makeSut()
     const decrypterSpy = jest.spyOn(decrypter, 'decrypt')
     const sutParams = {
-      todoItem: { description: 'any_description', title: 'any_title' },
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
     }
     await sut.insertOne(sutParams)
@@ -58,53 +82,142 @@ describe('DbInsertTodoItem', () => {
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockRejectedValueOnce(new Error('any_error'))
     const sutParams = {
-      todoItem: { description: 'any_description', title: 'any_title' },
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
     }
     const promise = sut.insertOne(sutParams)
     expect(promise).rejects.toThrow(new Error('any_error'))
   })
 
-  test('should call FindOneUserById with correct params ', async () => {
-    const { sut, findOneUserByIdSpy: findOneUserById, decrypterSpy } = makeSut()
-    const findOneUserByIdSpy = jest.spyOn(findOneUserById, 'findOne')
+  test('should call FindOneUserByIdRepository with correct params ', async () => {
+    const { sut, findOneUserByIdRepositorySpy: findOneUserByIdRepository, decrypterSpy } = makeSut()
+    const findOneUserByIdRepositorySpy = jest.spyOn(findOneUserByIdRepository, 'findOne')
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockReturnValueOnce(Promise.resolve(`${idUser}`))
     const sutParams = {
-      todoItem: { description: 'any_description', title: 'any_title' },
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
     }
     await sut.insertOne(sutParams)
-    expect(findOneUserByIdSpy).toHaveBeenCalledWith(idUser)
+    expect(findOneUserByIdRepositorySpy).toHaveBeenCalledWith(idUser)
   })
 
   test('should return null if FindOneUserById return null (user not found) ', async () => {
-    const { sut, findOneUserByIdSpy, decrypterSpy } = makeSut()
-    jest.spyOn(findOneUserByIdSpy, 'findOne').mockReturnValueOnce(null)
+    const { sut, findOneUserByIdRepositorySpy, decrypterSpy } = makeSut()
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne').mockReturnValueOnce(null)
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockReturnValueOnce(Promise.resolve(`${idUser}`))
     const sutParams = {
-      todoItem: { description: 'any_description', title: 'any_title' },
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
     }
     const insertOk = await sut.insertOne(sutParams)
     expect(insertOk).toBe(false)
   })
 
-  test('should return throws if FindOneUserById throws ', () => {
-    const { sut, findOneUserByIdSpy, decrypterSpy } = makeSut()
-    jest.spyOn(findOneUserByIdSpy, 'findOne')
+  test('should return throws if FindOneUserByIdRepository throws ', () => {
+    const { sut, findOneUserByIdRepositorySpy, decrypterSpy } = makeSut()
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
       .mockRejectedValueOnce(new Error('any_error'))
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
       .mockReturnValueOnce(Promise.resolve(`${idUser}`))
     const sutParams = {
-      todoItem: { description: 'any_description', title: 'any_title' },
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
     }
     const promise = sut.insertOne(sutParams)
     expect(promise).rejects.toThrow(new Error('any_error'))
+  })
+
+  test('should call InsertTodoItemRepository with correct params', async () => {
+    const {
+      sut,
+      findOneUserByIdRepositorySpy,
+      insertOneTodoItemRespositorySpy: insertOneTodoItemRespository
+    } = makeSut()
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+      .mockReturnValueOnce(Promise.resolve({
+        id: 1,
+        email: 'any_email',
+        name: 'any_name',
+        password: 'any_password'
+      }))
+    const insertOneTodoItemRespositorySpy =
+      jest.spyOn(insertOneTodoItemRespository, 'insertOne')
+    const sutParams = {
+      todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
+      userAccess: { token: 'any_token' }
+    }
+    await sut.insertOne(sutParams)
+    expect(insertOneTodoItemRespositorySpy)
+      .toHaveBeenCalledWith({
+        todoItem: {
+          idNameTodoArea: 'any_todo_area_id',
+          description: 'any_description',
+          title: 'any_title'
+        },
+        user: {
+          id: 1
+        }
+      })
+  })
+
+  test('should return throw if InsertTodoItemRepository throws', () => {
+    const {
+      sut,
+      findOneUserByIdRepositorySpy,
+      insertOneTodoItemRespositorySpy
+    } = makeSut()
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+      .mockReturnValueOnce(Promise.resolve({
+        id: 1,
+        email: 'any_email',
+        name: 'any_name',
+        password: 'any_password'
+      }))
+    jest.spyOn(insertOneTodoItemRespositorySpy, 'insertOne')
+      .mockRejectedValueOnce(new Error('any_error'))
+    const sutParams = {
+      todoItem: {
+        idNameTodoArea: 'any_todo_area_id',
+        description: 'any_description',
+        title: 'any_title'
+      },
+      userAccess: {
+        token: 'any_token'
+      }
+    }
+    const promise = sut.insertOne(sutParams)
+    expect(promise).rejects.toThrow(new Error('any_error'))
+  })
+
+  test('should return true if InsertTodoItemRepository a todo item', async () => {
+    const {
+      sut,
+      findOneUserByIdRepositorySpy
+    } = makeSut()
+    jest.spyOn(findOneUserByIdRepositorySpy, 'findOne')
+      .mockReturnValueOnce(Promise.resolve({
+        id: 1,
+        email: 'any_email',
+        name: 'any_name',
+        password: 'any_password'
+      }))
+
+    const sutParams = {
+      todoItem: {
+        idNameTodoArea: 'any_todo_area_id',
+        description: 'any_description',
+        title: 'any_title'
+      },
+      userAccess: {
+        token: 'any_token'
+      }
+    }
+    const insertOk = await sut.insertOne(sutParams)
+    expect(insertOk).toEqual(true)
   })
 })

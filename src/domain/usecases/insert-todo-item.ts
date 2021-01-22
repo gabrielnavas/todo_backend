@@ -7,6 +7,7 @@ export namespace InsertTodoItem {
     token: string
   }
   type TodoItemParams = {
+    idNameTodoArea: string,
     title: string,
     description: string
   }
