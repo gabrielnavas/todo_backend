@@ -1,3 +1,10 @@
 export interface Decrypter {
-  decrypt (ciphertext: string): Promise<string>
+  decrypt <P>(ciphertext: string): Promise<Decrypter.ReturnType>
+}
+
+export namespace Decrypter {
+  export type ReturnType = {
+    issuedAt?: number
+    payload: any
+  }
 }

@@ -1,16 +1,6 @@
 import { JwtAdapter } from '@/infra/cryptography'
 import jwt from 'jsonwebtoken'
 
-jest.mock('jsonwebtoken', () => ({
-  async sign (): Promise<string> {
-    return 'any_token'
-  },
-
-  async verify (): Promise<string> {
-    return 'any_value'
-  }
-}))
-
 const makeSut = (): JwtAdapter => {
   return new JwtAdapter('secret')
 }
@@ -20,20 +10,20 @@ describe('Jwt Adapter', () => {
     test('Should call sign with correct values', async () => {
       const sut = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
-      await sut.encrypt('any_id')
-      expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'secret')
+      await sut.encrypt('1')
+      expect(signSpy).toHaveBeenCalledWith({ id: 1 }, 'secret')
     })
 
     test('Should return a token on sign success', async () => {
       const sut = makeSut()
-      const accessToken = await sut.encrypt('any_id')
-      expect(accessToken).toBe('any_token')
+      const accessToken = await sut.encrypt('1')
+      expect(accessToken).toBeTruthy()
     })
 
     test('Should throw if sign throws', async () => {
       const sut = makeSut()
       jest.spyOn(jwt, 'sign').mockImplementationOnce(() => Promise.reject(new Error()))
-      const promise = sut.encrypt('any_id')
+      const promise = sut.encrypt('1')
       await expect(promise).rejects.toThrow()
     })
   })
@@ -41,15 +31,18 @@ describe('Jwt Adapter', () => {
   describe('verify()', () => {
     test('Should call verify with correct values', async () => {
       const sut = makeSut()
+      const accessToken = await sut.encrypt('1')
       const verifySpy = jest.spyOn(jwt, 'verify')
-      await sut.decrypt('any_token')
-      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
+      await sut.decrypt(accessToken)
+      expect(verifySpy).toHaveBeenCalledWith(accessToken, 'secret')
     })
 
     test('Should return a value on verify success', async () => {
       const sut = makeSut()
-      const value = await sut.decrypt('any_token')
-      expect(value).toBe('any_value')
+      const accessToken = await sut.encrypt('1')
+      const value = await sut.decrypt(accessToken)
+      expect(value.issuedAt).toBeGreaterThanOrEqual(1)
+      expect(value.payload).toEqual({ id: 1 })
     })
 
     test('Should throw if verify throws', async () => {

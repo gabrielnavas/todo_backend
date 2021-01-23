@@ -5,8 +5,12 @@ import { DbInsertTodoItem } from '@/data/usecases/db-insert-todo-item'
 
 const makeDecrypter = (): Decrypter => {
   return new class DecrypterSpy implements Decrypter {
-    async decrypt (ciphertext: string): Promise<string> {
-      return 'any_decrypted_token'
+    async decrypt (ciphertext: string): Promise<Decrypter.ReturnType> {
+      const payload = 'any_decrypted_token'
+      return {
+        issuedAt: 123,
+        payload: payload
+      }
     }
   }()
 }
@@ -94,7 +98,10 @@ describe('DbInsertTodoItem', () => {
     const findOneUserByIdRepositorySpy = jest.spyOn(findOneUserByIdRepository, 'findOneById')
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
-      .mockReturnValueOnce(Promise.resolve(`${idUser}`))
+      .mockReturnValueOnce(Promise.resolve({
+        issuedAt: 123,
+        payload: { id: 1 }
+      }))
     const sutParams = {
       todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
@@ -108,7 +115,10 @@ describe('DbInsertTodoItem', () => {
     jest.spyOn(findOneUserByIdRepositorySpy, 'findOneById').mockReturnValueOnce(null)
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
-      .mockReturnValueOnce(Promise.resolve(`${idUser}`))
+      .mockReturnValueOnce(Promise.resolve({
+        issuedAt: 123,
+        payload: { id: `${idUser}` }
+      }))
     const sutParams = {
       todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }
@@ -123,7 +133,10 @@ describe('DbInsertTodoItem', () => {
       .mockRejectedValueOnce(new Error('any_error'))
     const idUser = 1
     jest.spyOn(decrypterSpy, 'decrypt')
-      .mockReturnValueOnce(Promise.resolve(`${idUser}`))
+      .mockReturnValueOnce(Promise.resolve({
+        issuedAt: 123,
+        payload: { id: `${idUser}` }
+      }))
     const sutParams = {
       todoItem: { idNameTodoArea: 'any_todo_area_id', description: 'any_description', title: 'any_title' },
       userAccess: { token: 'any_token' }

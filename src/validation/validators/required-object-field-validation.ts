@@ -2,21 +2,17 @@ import { Validation } from '@/presentation/interfaces'
 import { MissingParamError } from '@/presentation/errors'
 import { ValidationComposite } from './validation-composite'
 
-export class RequiredFieldValidation implements Validation {
+export class RequiredObjectValidation implements Validation {
   constructor (
-    private readonly fieldName: string,
-    private readonly validationCompositeAttributes?: ValidationComposite
+    private readonly objectName: string,
+    private readonly validationCompositeAttributes: ValidationComposite
   ) {}
 
   validate (input: any): Error {
-    if (!input[this.fieldName]) {
-      return new MissingParamError(this.fieldName)
+    if (!input[this.objectName]) {
+      return new MissingParamError(`${this.objectName} object`)
     }
-
-    if (typeof input[this.fieldName] === 'object') {
-      const error = this.validationCompositeAttributes.validate(input[this.fieldName])
-      return error
-    }
-    return null
+    const error = this.validationCompositeAttributes.validate(input[this.objectName])
+    return error
   }
 }

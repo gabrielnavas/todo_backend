@@ -1,30 +1,23 @@
 import {
   ValidationComposite,
-  RequiredFieldValidation,
-  EmailValidation
+  RequiredObjectValidation,
+  RequiredFieldValidation
 } from '@/validation/validators'
 import { Validation } from '@/presentation/interfaces'
-import { EmailValidatorAdapter } from '@/infra/validation/email-validator-adapter'
-
-/**
- *
- * {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
-      }
- */
 
 export const insertTodoItemValidationFactory = (): ValidationComposite => {
   const validations: Validation[] = []
-  for (const field of ['email', 'password']) {
-    validations.push(new RequiredFieldValidation(field))
-  }
-  validations.push(new EmailValidation('email', new EmailValidatorAdapter()))
+  const userAccessValidations: Validation[] = []
+  const todoItemValidations: Validation[] = []
+  userAccessValidations.push(new RequiredFieldValidation('token'))
+  todoItemValidations.push(
+    new RequiredFieldValidation('idNameTodoArea'),
+    new RequiredFieldValidation('title'),
+    new RequiredFieldValidation('description')
+  )
+
+  validations.push(new RequiredObjectValidation('userAccess', new ValidationComposite(userAccessValidations)))
+  validations.push(new RequiredObjectValidation('todoItem', new ValidationComposite(todoItemValidations)))
+
   return new ValidationComposite(validations)
 }

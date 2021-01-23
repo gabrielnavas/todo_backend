@@ -11,9 +11,8 @@ export class DbInsertTodoItem implements InsertTodoItem {
   ) {}
 
   async insertOne (params: InsertTodoItem.Params): Promise<InsertTodoItem.Result> {
-    const idUserDecrypted = await this.decrypterToken.decrypt(params.userAccess.token)
-    const idUserNumber = Number(idUserDecrypted)
-    const userFound = await this.verifyIfUserExists.findOneById(idUserNumber)
+    const { payload } = await this.decrypterToken.decrypt(params.userAccess.token)
+    const userFound = await this.verifyIfUserExists.findOneById(payload.id)
     if (!userFound) return false
     const insertTodoParams = {
       todoItem: params.todoItem,
