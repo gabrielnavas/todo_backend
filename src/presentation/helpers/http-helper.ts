@@ -14,3 +14,8 @@ export const httpResponseServerError = (error: Error) => ({
   statusCode: 500,
   body: error
 })
+
+export const httpResponseForbidden = (error: Error): HttpResponse => ({
+  statusCode: 403,
+  body: error
+})
