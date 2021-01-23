@@ -1,6 +1,10 @@
 import { LoadUserAccountByToken } from '@/domain/usecases/load-user-account-by-token'
 import { AccessDeniedError } from '../errors/access-denied-error'
-import { httpResponseForbidden, httpResponseOk, httpResponseServerError } from '../helpers/http-helper'
+import {
+  httpResponseForbidden,
+  httpResponseOk,
+  httpResponseServerError
+} from '../helpers/http-helper'
 import { HttpResponse } from '../interfaces'
 import { Middleware } from '../interfaces/middleware'
 
