@@ -122,7 +122,7 @@ describe('UserPostgreSQLRepository', () => {
     })
   })
 
-  describe('UserPostgreSQLRepository/findOneByToken', () => {
+  describe('UserPostgreSQLRepository/FindOneByToken', () => {
     test('should call findOneByToken() with correct params', async () => {
       const userTokenAccessRepository = new UserTokenAccessPostgreSQLRepository()
       const userRepository = new UserPostgreSQLRepository()
