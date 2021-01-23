@@ -1,10 +1,10 @@
 import { InsertTodoItemController } from '@/presentation/controllers/insert-todo-item'
 import { Controller } from '@/presentation/interfaces'
-import { insertOneTodoItemFactory } from '../../data/usecases/insert-todo-item-factory'
+import { dbInsertOneTodoItemFactory } from '../../data/usecases/db-insert-todo-item-factory'
 import { insertTodoItemValidationFactory } from './insert-todo-item-validation-factory'
 
 export const insertTodoItemControllerFactory = (): Controller => {
   const validationCompose = insertTodoItemValidationFactory()
-  const insertTodoItemUseCase = insertOneTodoItemFactory()
+  const insertTodoItemUseCase = dbInsertOneTodoItemFactory()
   return new InsertTodoItemController(validationCompose, insertTodoItemUseCase)
 }

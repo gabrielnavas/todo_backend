@@ -10,7 +10,8 @@ export const adaptMiddleware = (middleware: Middleware) => {
     }
     const httpResponse = await middleware.handle(request)
     if (httpResponse.statusCode === 200) {
-      Object.assign(req, httpResponse.body)
+      const bodyContent = httpResponse.body
+      Object.assign(req, bodyContent)
       return next()
     }
     return res.status(httpResponse.statusCode).json({

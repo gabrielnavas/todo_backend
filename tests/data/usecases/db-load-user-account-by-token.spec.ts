@@ -1,9 +1,9 @@
-import { FindOneUserByTokenRepository } from '@/data/interfaces/find-one-user-by-token-repository'
-import { DbLoadUserAccountByToken } from '@/data/usecases/db-load-user-account-by-token'
+import { FindOneUserByIdAndTokenRepository } from '@/data/interfaces/find-one-user-by-id-token-repository'
+import { DbLoadUserAccountByToken } from '@/data/usecases/db-load-user-account-by-id-token'
 
-const makeFindOneUserByTokenRepository = (): FindOneUserByTokenRepository => {
-  return new class UserRepositorySpy implements FindOneUserByTokenRepository {
-    async findOneByToken (token: FindOneUserByTokenRepository.Params): Promise<FindOneUserByTokenRepository.Result> {
+const makeFindOneUserByTokenRepository = (): FindOneUserByIdAndTokenRepository => {
+  return new class UserRepositorySpy implements FindOneUserByIdAndTokenRepository {
+    async findOneByIdAndToken (token: FindOneUserByIdAndTokenRepository.Params): Promise<FindOneUserByIdAndTokenRepository.Result> {
       return {
         id: 1,
         name: 'any_name',
@@ -16,7 +16,7 @@ const makeFindOneUserByTokenRepository = (): FindOneUserByTokenRepository => {
 
 type SutTypes = {
   sut: DbLoadUserAccountByToken
-  findOneUserByTokenRepositorySpy: FindOneUserByTokenRepository
+  findOneUserByTokenRepositorySpy: FindOneUserByIdAndTokenRepository
 }
 
 const makeSut = (): SutTypes => {
@@ -32,24 +32,30 @@ describe('DbLoadUserAccountByToken', () => {
   test('should call FindOneUserByTokenRepository with correct params', async () => {
     const { sut, findOneUserByTokenRepositorySpy: findOneUserByTokenRepository } = makeSut()
     const findOneUserByTokenRepositorySpy = jest
-      .spyOn(findOneUserByTokenRepository, 'findOneByToken')
-    await sut.loadOneByToken('any_token')
-    expect(findOneUserByTokenRepositorySpy).toHaveBeenCalledWith('any_token')
+      .spyOn(findOneUserByTokenRepository, 'findOneByIdAndToken')
+    await sut.loadOneByIdAndToken({ idUser: 1, token: 'any_token' })
+    expect(findOneUserByTokenRepositorySpy).toHaveBeenCalledWith({
+      idUser: 1,
+      token: 'any_token'
+    })
   })
 
   test('should return throw if FindOneUserByTokenRepository throws', () => {
     const { sut, findOneUserByTokenRepositorySpy } = makeSut()
-    jest.spyOn(findOneUserByTokenRepositorySpy, 'findOneByToken')
+    jest.spyOn(findOneUserByTokenRepositorySpy, 'findOneByIdAndToken')
       .mockRejectedValueOnce(new Error('any_error'))
-    const promise = sut.loadOneByToken('any_token')
+    const promise = sut.loadOneByIdAndToken({ idUser: 1, token: 'any_token' })
     expect(promise).rejects.toThrow(new Error('any_error'))
   })
 
   test('should return null if FindOneUserByTokenRepository returns null', async () => {
     const { sut, findOneUserByTokenRepositorySpy } = makeSut()
-    jest.spyOn(findOneUserByTokenRepositorySpy, 'findOneByToken')
+    jest.spyOn(findOneUserByTokenRepositorySpy, 'findOneByIdAndToken')
       .mockReturnValueOnce(Promise.resolve(null))
-    const userAccount = await sut.loadOneByToken('any_token')
+    const userAccount = await sut.loadOneByIdAndToken({
+      idUser: 1,
+      token: 'any_token'
+    })
     expect(userAccount).toEqual(null)
   })
 })

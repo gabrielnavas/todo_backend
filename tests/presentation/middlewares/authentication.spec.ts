@@ -1,12 +1,24 @@
-import { LoadUserAccountByToken } from '@/domain/usecases/load-user-account-by-token'
+import { Decrypter } from '@/data/interfaces'
+import { LoadUserAccountByIdAndToken } from '@/domain/usecases/load-user-account-by-id-token'
 import { AccessDeniedError } from '@/presentation/errors/access-denied-error'
 import { httpResponseForbidden, httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
 import { Middleware } from '@/presentation/interfaces/middleware'
 import { AuthenticationMiddleware } from '@/presentation/middlewares/authentication'
 
-const makeLoadUserAccountByToken = (): LoadUserAccountByToken => {
-  return new class LoadUserAccountByTokenSpy implements LoadUserAccountByToken {
-    async loadOneByToken (parasm: LoadUserAccountByToken.Params): Promise<LoadUserAccountByToken.Result> {
+const makeDecrypter = (): Decrypter => {
+  return new class DecrypterSpy implements Decrypter {
+    async decrypt (ciphertext: string): Promise<Decrypter.ReturnType> {
+      return {
+        issuedAt: 123,
+        payload: { id: 1 }
+      }
+    }
+  }()
+}
+
+const makeLoadUserAccountByToken = (): LoadUserAccountByIdAndToken => {
+  return new class LoadUserAccountByTokenSpy implements LoadUserAccountByIdAndToken {
+    async loadOneByIdAndToken (parasm: LoadUserAccountByIdAndToken.Params): Promise<LoadUserAccountByIdAndToken.Result> {
       return {
         id: 1,
         email: 'any_email',
@@ -19,42 +31,72 @@ const makeLoadUserAccountByToken = (): LoadUserAccountByToken => {
 
 type SutTypes = {
   sut: Middleware
-  loadUserAccountByTokenSpy: LoadUserAccountByToken
+  loadUserAccountByTokenSpy: LoadUserAccountByIdAndToken
+  decrypterSpy: Decrypter
 }
 
-const makeAuthentication = (): SutTypes => {
+const makeSut = (): SutTypes => {
+  const decrypterSpy = makeDecrypter()
   const loadUserAccountByTokenSpy = makeLoadUserAccountByToken()
-  const sut = new AuthenticationMiddleware(loadUserAccountByTokenSpy)
+  const sut = new AuthenticationMiddleware(
+    loadUserAccountByTokenSpy,
+    decrypterSpy
+  )
   return {
     sut,
-    loadUserAccountByTokenSpy
+    loadUserAccountByTokenSpy,
+    decrypterSpy
   }
 }
 
 describe('AuthenticationMiddleware', () => {
-  test('should call FindUserAccountByToken by with correct access token', async () => {
-    const { sut, loadUserAccountByTokenSpy: loadUserAccountByToken } = makeAuthentication()
-    const loadAccountByTokenSpy = jest.spyOn(loadUserAccountByToken, 'loadOneByToken')
-    await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
-    expect(loadAccountByTokenSpy).toHaveBeenCalledWith('any_token')
+  test('should call decryptor with correct user access token ', async () => {
+    const { sut, decrypterSpy: decrypter } = makeSut()
+    const decrypterSpy = jest.spyOn(decrypter, 'decrypt')
+    const sutParams = {
+      accessToken: 'any_token'
+    }
+    await sut.handle(sutParams)
+    expect(decrypterSpy).toHaveBeenCalledWith('any_token')
   })
 
-  test('should return throw if FindUserAccountByToken throws', async () => {
-    const { sut, loadUserAccountByTokenSpy } = makeAuthentication()
-    jest.spyOn(loadUserAccountByTokenSpy, 'loadOneByToken').mockRejectedValueOnce(new Error('any_error'))
+  test('should return throw if decryptor token throws', async () => {
+    const { sut, decrypterSpy } = makeSut()
+    jest.spyOn(decrypterSpy, 'decrypt')
+      .mockRejectedValueOnce(new Error('any_error'))
+    const sutParams = {
+      accessToken: 'any_token'
+    }
+    const httpResponse = await sut.handle(sutParams)
+    expect(httpResponse).toEqual(httpResponseForbidden(new AccessDeniedError()))
+  })
+
+  test('should call LoadUserAccountByIdAndToken by with correct access token', async () => {
+    const { sut, loadUserAccountByTokenSpy: loadUserAccountByToken } = makeSut()
+    const loadAccountByTokenSpy = jest.spyOn(loadUserAccountByToken, 'loadOneByIdAndToken')
+    await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
+    expect(loadAccountByTokenSpy).toHaveBeenCalledWith({
+      idUser: 1,
+      token: 'any_token'
+    })
+  })
+
+  test('should return throw if LoadUserAccountByIdAndToken throws', async () => {
+    const { sut, loadUserAccountByTokenSpy } = makeSut()
+    jest.spyOn(loadUserAccountByTokenSpy, 'loadOneByIdAndToken').mockRejectedValueOnce(new Error('any_error'))
     const httpResponse = await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
     expect(httpResponse).toEqual(httpResponseServerError(new Error('any_error')))
   })
 
-  test('should return forbidden 403 if FindUserAccountByToken return null', async () => {
-    const { sut, loadUserAccountByTokenSpy } = makeAuthentication()
-    jest.spyOn(loadUserAccountByTokenSpy, 'loadOneByToken').mockReturnValueOnce(null)
+  test('should return forbidden 403 if LoadUserAccountByIdAndToken return null', async () => {
+    const { sut, loadUserAccountByTokenSpy } = makeSut()
+    jest.spyOn(loadUserAccountByTokenSpy, 'loadOneByIdAndToken').mockReturnValueOnce(null)
     const httpResponse = await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
     expect(httpResponse).toEqual(httpResponseForbidden(new AccessDeniedError()))
   })
 
-  test('should return ok and a accountId if FindUserAccountByToken return a user account ', async () => {
-    const { sut } = makeAuthentication()
+  test('should return ok and a accountId if LoadUserAccountByIdAndToken return a user account ', async () => {
+    const { sut } = makeSut()
     const httpResponse = await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
     expect(httpResponse).toEqual(httpResponseOk({ accountId: 1 }))
   })

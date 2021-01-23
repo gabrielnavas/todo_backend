@@ -6,11 +6,13 @@ import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 describe('POST /login', () => {
   beforeAll(async () => {
     await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+    await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
   afterAll(async () => {
     await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+    await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
@@ -35,7 +37,7 @@ describe('POST /login', () => {
         expect(res.body).toBeTruthy()
         expect(res.body.token).toBeTruthy()
         expect(typeof res.body.token).toBe('string')
-        expect(res.body.token.length).toBe(120)
+        expect(res.body.token.length).toBeGreaterThan(100)
         expect(res.body.userName).toBe('Gabriel Navas')
         expect(res.body.email).toBe('gabrielnavas@gmail.com')
         done()

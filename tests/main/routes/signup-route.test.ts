@@ -28,7 +28,7 @@ describe('POST /signup', () => {
         expect(res.body).toBeTruthy()
         expect(res.body.token).toBeTruthy()
         expect(typeof res.body.token).toBe('string')
-        expect(res.body.token.length).toBe(120)
+        expect(res.body.token.length).toBeGreaterThan(100)
         expect(res.body.userName).toBe('Gabriel Navas')
         expect(res.body.email).toBe('gabrielnavas@gmail.com')
         done()

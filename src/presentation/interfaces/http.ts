@@ -1,4 +1,5 @@
 export type HttpRequest<Body = any> = {
+  accountId?: number
   body?: Body
 }
 

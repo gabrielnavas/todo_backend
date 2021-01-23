@@ -45,15 +45,11 @@ describe('InsertTodoItemController', () => {
     const { sut, validationSpy: validation } = makeSut()
     const validationSpy = jest.spyOn(validation, 'validate')
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
     await sut.handle(httpRequest)
@@ -65,14 +61,11 @@ describe('InsertTodoItemController', () => {
     jest.spyOn(validationSpy, 'validate')
       .mockReturnValueOnce(new MissingParamError('token'))
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
     const response = await sut.handle(httpRequest)
@@ -85,19 +78,19 @@ describe('InsertTodoItemController', () => {
     const { sut, insertTodoItemSpy: insertTodoItem } = makeSut()
     const insertTodoItemSpy = jest.spyOn(insertTodoItem, 'insertOne')
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
+    const expectedParams = {
+      user: { id: httpRequest.accountId },
+      todoItem: httpRequest.body
+    } as InsertTodoItem.Params
     await sut.handle(httpRequest)
-    expect(insertTodoItemSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(insertTodoItemSpy).toHaveBeenCalledWith(expectedParams)
   })
 
   test('should return 400 bad request if token invalid', async () => {
@@ -105,15 +98,11 @@ describe('InsertTodoItemController', () => {
     jest.spyOn(insertTodoItemSpy, 'insertOne')
       .mockReturnValueOnce(Promise.resolve(false))
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -127,15 +116,11 @@ describe('InsertTodoItemController', () => {
       new Error('any_error')
     )
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -145,15 +130,11 @@ describe('InsertTodoItemController', () => {
   test('should return ok if insertTodoItem ok', async () => {
     const { sut } = makeSut()
     const httpRequest: HttpRequest = {
+      accountId: 1,
       body: {
-        userAccess: {
-          token: 'any_token'
-        },
-        todoItem: {
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
     const httpResponse = await sut.handle(httpRequest)

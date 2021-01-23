@@ -1,4 +1,5 @@
-import { LoadUserAccountByToken } from '@/domain/usecases/load-user-account-by-token'
+import { Decrypter } from '@/data/interfaces'
+import { LoadUserAccountByIdAndToken } from '@/domain/usecases/load-user-account-by-id-token'
 import { AccessDeniedError } from '../errors/access-denied-error'
 import {
   httpResponseForbidden,
@@ -10,13 +11,27 @@ import { Middleware } from '../interfaces/middleware'
 
 export class AuthenticationMiddleware implements Middleware {
   constructor (
-    private readonly findUserAccountByToken: LoadUserAccountByToken
+    private readonly findUserAccountByToken: LoadUserAccountByIdAndToken,
+    private readonly decrypterToken: Decrypter
   ) {}
 
   async handle (request: AuthenticationMiddleware.Params): Promise<HttpResponse> {
+    let idUser = undefined as number
+    let accessToken = undefined as string
+
     try {
-      const { accessToken } = request
-      const userAccount = await this.findUserAccountByToken.loadOneByToken(accessToken)
+      accessToken = request.accessToken
+      const { payload } = await this.decrypterToken.decrypt(accessToken)
+      idUser = payload.id
+    } catch (error) {
+      return httpResponseForbidden(new AccessDeniedError())
+    }
+
+    try {
+      const userAccount = await this.findUserAccountByToken.loadOneByIdAndToken({
+        idUser,
+        token: accessToken
+      })
       if (!userAccount) return httpResponseForbidden(new AccessDeniedError())
       return httpResponseOk({ accountId: userAccount.id })
     } catch (error) {

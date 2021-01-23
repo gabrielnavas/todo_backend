@@ -4,7 +4,8 @@ import { adaptRoute } from '../adapters/express-route-adapter'
 import {
   insertTodoItemControllerFactory
 } from '../factories/presentation/controllers/insert-todo-item-controller-factory'
+import { authentication } from '../middlewares/authentication'
 
 export default (route: Router) => {
-  route.post('/insert_todo_item', adaptRoute(insertTodoItemControllerFactory()))
+  route.post('/insert_todo_item', authentication, adaptRoute(insertTodoItemControllerFactory()))
 }

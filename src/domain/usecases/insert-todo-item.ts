@@ -3,8 +3,8 @@ export interface InsertTodoItem {
 }
 
 export namespace InsertTodoItem {
-  type UserAccessParams = {
-    token: string
+  type UserParams = {
+    id: number
   }
   type TodoItemParams = {
     idNameTodoArea: string,
@@ -12,7 +12,7 @@ export namespace InsertTodoItem {
     description: string
   }
   export type Params = {
-    userAccess: UserAccessParams
+    user: UserParams
     todoItem: TodoItemParams
   }
 

@@ -82,46 +82,6 @@ describe('UserPostgreSQLRepository', () => {
     })
   })
 
-  describe('UserPostgreSQLRepository/findOneById', () => {
-    test('should call findOneById() with correct FindOneUserByEmailRepository.Params if not found', async () => {
-      const sut = new UserPostgreSQLRepository()
-      const params = {
-        name: 'any_name',
-        email: 'any_email',
-        password: 'any_password'
-      }
-      const { id } = await sut.insertOne(params)
-      const resp = await sut.findOneById(id)
-      expect(resp).toEqual({
-        id,
-        name: params.name,
-        email: params.email,
-        password: params.password
-      })
-    })
-
-    test('should returns a null if findOneById() user not found', async () => {
-      const sut = new UserPostgreSQLRepository()
-      const params = {
-        name: 'any_name',
-        email: 'any_email',
-        password: 'any_password'
-      }
-      const { id: lastId } = await sut.insertOne(params)
-      const idFake = lastId + 1
-      const respFound = await sut.findOneById(idFake)
-      expect(respFound).toEqual(null)
-    })
-
-    test('should throw if findOneById() throws', async () => {
-      const sut = new UserPostgreSQLRepository()
-      jest.spyOn(sut, 'findOneById')
-        .mockRejectedValueOnce(new Error())
-      const promise = sut.findOneById(1)
-      expect(promise).rejects.toThrowError(new Error())
-    })
-  })
-
   describe('UserPostgreSQLRepository/FindOneByToken', () => {
     test('should call findOneByToken() with correct params', async () => {
       const userTokenAccessRepository = new UserTokenAccessPostgreSQLRepository()
@@ -132,12 +92,14 @@ describe('UserPostgreSQLRepository', () => {
         name: 'any_name',
         password: 'any_password'
       })
-      const result = await userTokenAccessRepository.insertOne({
+      const userTokenAccess = await userTokenAccessRepository.insertOne({
         idUser: user.id,
         token: 'any_token'
       })
-
-      const userAccount = await sut.findOneByToken(result.token)
+      const userAccount = await sut.findOneByIdAndToken({
+        idUser: user.id,
+        token: userTokenAccess.token
+      })
       expect(userAccount.id).toBeGreaterThanOrEqual(1)
       expect(userAccount.name).toEqual(user.name)
       expect(userAccount.email).toEqual(user.email)
@@ -146,15 +108,21 @@ describe('UserPostgreSQLRepository', () => {
 
     test('should return null if findOneByToken() return null', async () => {
       const sut = new UserPostgreSQLRepository()
-      jest.spyOn(sut, 'findOneByToken').mockReturnValueOnce(null)
-      const userAccount = await sut.findOneByToken('any_token')
+      jest.spyOn(sut, 'findOneByIdAndToken').mockReturnValueOnce(null)
+      const userAccount = await sut.findOneByIdAndToken({
+        idUser: 1,
+        token: 'any_token'
+      })
       expect(userAccount).toEqual(null)
     })
 
     test('should return throw if findOneByToken() throws', () => {
       const sut = new UserPostgreSQLRepository()
-      jest.spyOn(sut, 'findOneByToken').mockRejectedValueOnce(new Error('any_error'))
-      const promise = sut.findOneByToken('any_token')
+      jest.spyOn(sut, 'findOneByIdAndToken').mockRejectedValueOnce(new Error('any_error'))
+      const promise = sut.findOneByIdAndToken({
+        idUser: 1,
+        token: 'any_token'
+      })
       expect(promise).rejects.toThrow(new Error('any_error'))
     })
   })

@@ -15,14 +15,18 @@ import {
 export class InsertTodoItemController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly insertTodoItemSpy: InsertTodoItem
+    private readonly insertTodoItem: InsertTodoItem
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(httpRequest.body)
       if (error) return httpResponseBadRequest(error)
-      const insertOk = await this.insertTodoItemSpy.insertOne(httpRequest.body)
+      const insertTodoItemParams = {
+        todoItem: httpRequest.body,
+        user: { id: httpRequest.accountId }
+      } as InsertTodoItem.Params
+      const insertOk = await this.insertTodoItem.insertOne(insertTodoItemParams)
       if (!insertOk) return httpResponseBadRequest(new InvalidUserTokenError())
       return httpResponseOk()
     } catch (error) {
