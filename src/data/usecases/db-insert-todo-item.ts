@@ -3,13 +3,13 @@ import { InsertOneTodoItemRespository } from '../interfaces/insert-one-todo-item
 
 export class DbInsertTodoItem implements InsertTodoItem {
   constructor (
-    private readonly insertTodoItem: InsertOneTodoItemRespository
+    private readonly insertTodoItemRepository: InsertOneTodoItemRespository
   ) {}
 
   async insertOne (params: InsertTodoItem.Params): Promise<InsertTodoItem.Result> {
     const { todoItem, user } = params
     const insertTodoParams = { todoItem, user } as InsertOneTodoItemRespository.Params
-    const newTodoItem = await this.insertTodoItem.insertOne(insertTodoParams)
+    const newTodoItem = await this.insertTodoItemRepository.insertOne(insertTodoParams)
     return !!newTodoItem
   }
 }

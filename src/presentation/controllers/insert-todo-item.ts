@@ -1,4 +1,6 @@
 import { InsertTodoItem } from '@/domain/usecases/insert-todo-item'
+import { UnauthorizedError } from '../errors/unauthorized-error'
+import { UnexpectedError } from '../errors/unexpected-error'
 import { InvalidUserTokenError } from '../errors/user-access-token-invalid-error'
 import {
   httpResponseBadRequest,
@@ -27,7 +29,7 @@ export class InsertTodoItemController implements Controller {
         user: { id: httpRequest.accountId }
       } as InsertTodoItem.Params
       const insertOk = await this.insertTodoItem.insertOne(insertTodoItemParams)
-      if (!insertOk) return httpResponseBadRequest(new InvalidUserTokenError())
+      if (!insertOk) return httpResponseBadRequest(new UnexpectedError())
       return httpResponseOk()
     } catch (error) {
       return httpResponseServerError(error)

@@ -1,7 +1,6 @@
 import { InsertTodoItem } from '@/domain/usecases/insert-todo-item'
 import { InsertTodoItemController } from '@/presentation/controllers/insert-todo-item'
-import { MissingParamError } from '@/presentation/errors'
-import { InvalidUserTokenError } from '@/presentation/errors/user-access-token-invalid-error'
+import { MissingParamError, UnexpectedError } from '@/presentation/errors'
 import {
   httpResponseBadRequest,
   httpResponseOk,
@@ -107,7 +106,7 @@ describe('InsertTodoItemController', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse)
-      .toEqual(httpResponseBadRequest(new InvalidUserTokenError()))
+      .toEqual(httpResponseBadRequest(new UnexpectedError()))
   })
 
   test('should return 500 server error if insertTodoItem throws', async () => {
