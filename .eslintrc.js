@@ -17,6 +17,7 @@ module.exports = {
   ],
   rules: {
     'no-useless-constructor': 'off',
-    'no-redeclare': 'off'
+    'no-redeclare': 'off',
+    camelcase: 'off'
   }
 }

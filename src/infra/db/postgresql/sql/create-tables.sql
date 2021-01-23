@@ -71,6 +71,28 @@ REFERENCES public."user" (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
+-- object: public.todo_item | type: TABLE --
+-- DROP TABLE IF EXISTS public.todo_item CASCADE;
+CREATE TABLE public.todo_item (
+	id serial NOT NULL,
+	id_name_area varchar(60) NOT NULL,
+	title varchar(100) NOT NULL,
+	description varchar(255) NOT NULL,
+	id_user integer NOT NULL,
+	CONSTRAINT todo_item_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE public.todo_item OWNER TO postgres;
+-- ddl-end --
+
+-- object: user_fk | type: CONSTRAINT --
+-- ALTER TABLE public.todo_item DROP CONSTRAINT IF EXISTS user_fk CASCADE;
+ALTER TABLE public.todo_item ADD CONSTRAINT user_fk FOREIGN KEY (id_user)
+REFERENCES public."user" (id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
 -- object: "grant_CU_eb94f049ac" | type: PERMISSION --
 GRANT CREATE,USAGE
    ON SCHEMA public
