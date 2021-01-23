@@ -1,5 +1,6 @@
 import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 import { UserPostgreSQLRepository } from '@/infra/db/postgresql/repositories/user-repository'
+import { UserTokenAccessPostgreSQLRepository } from '@/infra/db/postgresql/repositories/user-token-access-repository'
 
 describe('UserPostgreSQLRepository', () => {
   beforeEach(async () => {
@@ -118,6 +119,43 @@ describe('UserPostgreSQLRepository', () => {
         .mockRejectedValueOnce(new Error())
       const promise = sut.findOneById(1)
       expect(promise).rejects.toThrowError(new Error())
+    })
+  })
+
+  describe('UserPostgreSQLRepository/findOneByToken', () => {
+    test('should call findOneByToken() with correct params', async () => {
+      const userTokenAccessRepository = new UserTokenAccessPostgreSQLRepository()
+      const userRepository = new UserPostgreSQLRepository()
+      const sut = new UserPostgreSQLRepository()
+      const user = await userRepository.insertOne({
+        email: 'any_email',
+        name: 'any_name',
+        password: 'any_password'
+      })
+      const result = await userTokenAccessRepository.insertOne({
+        idUser: user.id,
+        token: 'any_token'
+      })
+
+      const userAccount = await sut.findOneByToken(result.token)
+      expect(userAccount.id).toBeGreaterThanOrEqual(1)
+      expect(userAccount.name).toEqual(user.name)
+      expect(userAccount.email).toEqual(user.email)
+      expect(userAccount.password).toEqual(user.password)
+    })
+
+    test('should return null if findOneByToken() return null', async () => {
+      const sut = new UserPostgreSQLRepository()
+      jest.spyOn(sut, 'findOneByToken').mockReturnValueOnce(null)
+      const userAccount = await sut.findOneByToken('any_token')
+      expect(userAccount).toEqual(null)
+    })
+
+    test('should return throw if findOneByToken() throws', () => {
+      const sut = new UserPostgreSQLRepository()
+      jest.spyOn(sut, 'findOneByToken').mockRejectedValueOnce(new Error('any_error'))
+      const promise = sut.findOneByToken('any_token')
+      expect(promise).rejects.toThrow(new Error('any_error'))
     })
   })
 })

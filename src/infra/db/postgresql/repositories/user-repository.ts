@@ -1,12 +1,17 @@
 import {
   FindOneUserByEmailRepository,
   FindOneUserByIdRepository,
+  FindOneUserByTokenRepository,
   InsertOneUserRepository
 } from '@/data/interfaces/'
 import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 
 export class UserPostgreSQLRepository
-implements InsertOneUserRepository, FindOneUserByEmailRepository, FindOneUserByIdRepository {
+implements
+InsertOneUserRepository,
+FindOneUserByEmailRepository,
+FindOneUserByIdRepository,
+FindOneUserByTokenRepository {
   async insertOne (params: InsertOneUserRepository.Params):
     Promise<InsertOneUserRepository.Result> {
     const sql = `
@@ -43,5 +48,22 @@ implements InsertOneUserRepository, FindOneUserByEmailRepository, FindOneUserByI
       .getPool()
       .query(sql, [id])
     return userMRepository.rowCount > 0 ? userMRepository.rows[0] : null
+  }
+
+  async findOneByToken (token: FindOneUserByTokenRepository.Params): Promise<FindOneUserByTokenRepository.Result> {
+    const sql = `
+      SELECT 
+        public."user".id, name, email, password
+      FROM 
+        public."user",
+        public."user_token_access"  
+      WHERE public."user_token_access".token = $1
+    `
+    const userMRepository = await PGHelper
+      .getPool()
+      .query(sql, [token])
+    const isFound: FindOneUserByTokenRepository.Result | null =
+     userMRepository.rowCount > 0 ? userMRepository.rows[0] : null
+    return isFound
   }
 }
