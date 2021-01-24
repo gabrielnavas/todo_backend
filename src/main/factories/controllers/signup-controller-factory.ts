@@ -1,7 +1,7 @@
-import { dbUserInsertOneFactory } from '@/main/factories/data/usecases/db-user-insert-one'
+import { dbUserInsertOneFactory } from '@/main/factories/data/db-user-insert-one'
 import { SignUpController } from '@/presentation/controllers/signup'
 import { Controller } from '@/presentation/interfaces'
-import { dbAuthenticationFactory } from '../../data/usecases/db-authentication-factory'
+import { dbAuthenticationFactory } from '../data/db-authentication-factory'
 import { makeSignUpValidationFactory } from './signup-validation-factory'
 
 export const signupControllerFactory = (): Controller => {

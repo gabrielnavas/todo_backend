@@ -1,6 +1,6 @@
 import { AuthenticationMiddleware } from '@/presentation/middlewares'
 import { Middleware } from '@/presentation/interfaces'
-import { dbLoadUserAccountByTokenFactory } from '../data/usecases/db-load-user-account-by-token-factory'
+import { dbLoadUserAccountByTokenFactory } from '../data/db-load-user-account-by-token-factory'
 import { JwtAdapter } from '@/infra/cryptography'
 import env from '@/main/configs/env'
 
