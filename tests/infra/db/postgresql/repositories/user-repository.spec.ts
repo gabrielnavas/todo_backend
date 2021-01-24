@@ -5,11 +5,13 @@ import { UserTokenAccessPostgreSQLRepository } from '@/infra/db/postgresql/repos
 describe('UserPostgreSQLRepository', () => {
   beforeEach(async () => {
     await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+    await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
   afterEach(async () => {
     await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+    await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
     await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
   })
 
