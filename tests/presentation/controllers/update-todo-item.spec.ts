@@ -18,7 +18,12 @@ import {
 const makeUpdateTodoItem = (): UpdateTodoItem => {
   return new class UpdateTodoItemSpy implements UpdateTodoItem {
     async updateOne (params: UpdateTodoItem.Params): Promise<UpdateTodoItem.Result> {
-      return true
+      return {
+        id: 1,
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
+      }
     }
   }()
 }
@@ -100,10 +105,10 @@ describe('UpdateTodoItemController', () => {
     })
   })
 
-  test('should return 400 bad request if UpdateTodoItem returns false', async () => {
+  test('should return 400 bad request if UpdateTodoItem returns null', async () => {
     const { sut, updateTodoItemSpy } = makeSut()
     jest.spyOn(updateTodoItemSpy, 'updateOne')
-      .mockReturnValueOnce(Promise.resolve(false))
+      .mockReturnValueOnce(Promise.resolve(null))
     const httpRequest: HttpRequest = {
       accountId: 1,
       body: {

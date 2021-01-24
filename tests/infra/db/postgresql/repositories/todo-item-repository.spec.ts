@@ -35,13 +35,10 @@ describe('TodoItemPostgreSQLRepository', () => {
           idNameTodoArea: 'any_todo_name_area'
         }
       })
-      expect(resultInsert.user).toEqual({
-        id: user.id
-      })
-      expect(resultInsert.todoItem.id).toBeGreaterThan(0)
-      expect(resultInsert.todoItem.title).toEqual('any_title')
-      expect(resultInsert.todoItem.description).toEqual('any_description')
-      expect(resultInsert.todoItem.idNameTodoArea).toEqual('any_todo_name_area')
+      expect(resultInsert.id).toBeGreaterThan(0)
+      expect(resultInsert.title).toEqual('any_title')
+      expect(resultInsert.description).toEqual('any_description')
+      expect(resultInsert.idNameTodoArea).toEqual('any_todo_name_area')
     })
 
     test('should return throws if insertOne() throws', async () => {
@@ -105,7 +102,7 @@ describe('TodoItemPostgreSQLRepository', () => {
           id: user.id
         },
         todoItem: {
-          id: resultInsert.todoItem.id,
+          id: resultInsert.id,
           title: 'any_title_modified',
           description: 'any_description_modified',
           idNameTodoArea: 'any_todo_name_area_modified'
@@ -113,13 +110,10 @@ describe('TodoItemPostgreSQLRepository', () => {
       } as UpdateOneTodoItemRespository.Params
       const sut = new TodoItemPostgreSQLRepository()
       const resultUpdate = await sut.updateOne(updateTodoParams)
-      expect(resultUpdate.user).toEqual({
-        id: user.id
-      })
-      expect(resultUpdate.todoItem.id).toBeGreaterThan(0)
-      expect(resultUpdate.todoItem.title).toEqual('any_title_modified')
-      expect(resultUpdate.todoItem.description).toEqual('any_description_modified')
-      expect(resultUpdate.todoItem.idNameTodoArea).toEqual('any_todo_name_area_modified')
+      expect(resultUpdate.id).toBeGreaterThan(0)
+      expect(resultUpdate.title).toEqual('any_title_modified')
+      expect(resultUpdate.description).toEqual('any_description_modified')
+      expect(resultUpdate.idNameTodoArea).toEqual('any_todo_name_area_modified')
     })
 
     test('should return throws if insertOne() throws', async () => {

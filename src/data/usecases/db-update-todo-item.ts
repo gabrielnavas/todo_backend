@@ -12,6 +12,6 @@ export class DbUpdateTodoItem implements UpdateTodoItem {
       user: params.user
     } as UpdateOneTodoItemRespository.Params
     const todoUpdated = await this.updateOneTodoItemRespository.updateOne(updateParams)
-    return !!todoUpdated
+    return todoUpdated
   }
 }

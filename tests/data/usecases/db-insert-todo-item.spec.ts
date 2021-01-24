@@ -1,17 +1,15 @@
 import { InsertOneTodoItemRepository } from '@/data/interfaces/insert-one-todo-item-repository'
 import { DbInsertTodoItem } from '@/data/usecases/db-insert-todo-item'
+import { InsertTodoItem } from '@/domain/usecases/insert-todo-item'
 
 const makeInsertOneTodoItemRespository = (): InsertOneTodoItemRepository => {
   return new class InsertOneTodoItemRepositorySpy implements InsertOneTodoItemRepository {
     async insertOne (params: InsertOneTodoItemRepository.Params): Promise<InsertOneTodoItemRepository.Result> {
       return {
-        todoItem: {
-          id: 1,
-          idNameTodoArea: 'todo',
-          title: 'any_title',
-          description: 'any_descrption'
-        },
-        user: { id: 1 }
+        id: 1,
+        idNameTodoArea: 'any_todo_area_id',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
   }()
@@ -82,7 +80,7 @@ describe('DbInsertTodoItem', () => {
     expect(promise).rejects.toThrow(new Error('any_error'))
   })
 
-  test('should return true if InsertTodoItemRepository a todo item', async () => {
+  test('should return todoItemModel if InsertTodoItemRepository return todoItemModel', async () => {
     const { sut } = makeSut()
     const sutParams = {
       todoItem: {
@@ -94,7 +92,12 @@ describe('DbInsertTodoItem', () => {
         id: 1
       }
     }
-    const insertOk = await sut.insertOne(sutParams)
-    expect(insertOk).toEqual(true)
+    const todoItemModel = await sut.insertOne(sutParams)
+    expect(todoItemModel).toEqual({
+      id: 1,
+      idNameTodoArea: 'any_todo_area_id',
+      description: 'any_description',
+      title: 'any_title'
+    } as InsertTodoItem.Result)
   })
 })

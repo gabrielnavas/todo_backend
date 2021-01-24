@@ -6,15 +6,10 @@ const makeUpdateOneTodoItemRespository = (): UpdateOneTodoItemRespository => {
   return new class UpdateOneTodoItemRespositorySpy implements UpdateOneTodoItemRespository {
     async updateOne (params: UpdateOneTodoItemRespository.Params): Promise<UpdateOneTodoItemRespository.Result> {
       return {
-        todoItem: {
-          id: 1,
-          idNameTodoArea: 'todo',
-          title: 'any_title',
-          description: 'any_descrption'
-        },
-        user: {
-          id: 1
-        }
+        id: 1,
+        idNameTodoArea: 'any_name_todo_area_id',
+        title: 'any_title',
+        description: 'any_description'
       }
     }
   }()
@@ -84,7 +79,7 @@ describe('DbInsertTodoItem', () => {
     expect(promise).rejects.toThrow(new Error('any_error'))
   })
 
-  test('should return true if InsertTodoItemRepository a todo item', async () => {
+  test('should return todoItemUpdated if InsertTodoItemRepository a todoItemUpdated', async () => {
     const { sut } = makeSut()
     const sutParams = {
       todoItem: {
@@ -97,7 +92,12 @@ describe('DbInsertTodoItem', () => {
         id: 1
       }
     } as UpdateTodoItem.Params
-    const updateOk = await sut.updateOne(sutParams)
-    expect(updateOk).toEqual(true)
+    const todoItemUpdated = await sut.updateOne(sutParams)
+    expect(todoItemUpdated).toEqual({
+      id: 1,
+      title: 'any_title',
+      description: 'any_description',
+      idNameTodoArea: 'any_name_todo_area_id'
+    })
   })
 })

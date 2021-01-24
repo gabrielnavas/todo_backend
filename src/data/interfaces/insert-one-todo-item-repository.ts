@@ -15,10 +15,5 @@ export namespace InsertOneTodoItemRepository {
       id: number
     }
   }
-  export type Result = {
-    todoItem: TodoItemModelRepository,
-    user: {
-      id: number
-    }
-  }
+  export type Result = TodoItemModelRepository
 }

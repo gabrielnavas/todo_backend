@@ -5,12 +5,11 @@ export interface UpdateOneTodoItemRespository {
 }
 
 export namespace UpdateOneTodoItemRespository {
-  type TodoItemOnUpdate = {
+  export type Params = {
     todoItem: TodoItemModelRepository,
     user: {
       id: number
     }
   }
-  export type Params = TodoItemOnUpdate
-  export type Result = TodoItemOnUpdate
+  export type Result = TodoItemModelRepository
 }

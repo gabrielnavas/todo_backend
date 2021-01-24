@@ -10,6 +10,6 @@ export class DbInsertTodoItem implements InsertTodoItem {
     const { todoItem, user } = params
     const insertTodoParams = { todoItem, user } as InsertOneTodoItemRepository.Params
     const newTodoItem = await this.insertTodoItemRepository.insertOne(insertTodoParams)
-    return !!newTodoItem
+    return newTodoItem
   }
 }

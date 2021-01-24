@@ -16,7 +16,12 @@ import { ValidationSpy } from '../mocks/mock-validation'
 const makeInsertTodoItem = (): InsertTodoItem => {
   class InsertTodoItemSpy implements InsertTodoItem {
     async insertOne (params: InsertTodoItem.Params): Promise<InsertTodoItem.Result> {
-      return true
+      return {
+        id: 1,
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
+      }
     }
   }
   return new InsertTodoItemSpy()
@@ -92,10 +97,10 @@ describe('InsertTodoItemController', () => {
     expect(insertTodoItemSpy).toHaveBeenCalledWith(expectedParams)
   })
 
-  test('should return 400 bad request if token invalid', async () => {
+  test('should return 400 if insertTodoItem returns null', async () => {
     const { sut, insertTodoItemSpy } = makeSut()
     jest.spyOn(insertTodoItemSpy, 'insertOne')
-      .mockReturnValueOnce(Promise.resolve(false))
+      .mockReturnValueOnce(Promise.resolve(null))
     const httpRequest: HttpRequest = {
       accountId: 1,
       body: {
@@ -137,6 +142,11 @@ describe('InsertTodoItemController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseOk())
+    expect(httpResponse).toEqual(httpResponseOk({
+      id: 1,
+      idNameTodoArea: 'any_id_todo_area',
+      title: 'any_title',
+      description: 'any_description'
+    }))
   })
 })

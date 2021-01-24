@@ -17,21 +17,16 @@ implements InsertOneTodoItemRepository, UpdateOneTodoItemRespository {
         ) VALUES (
           $1, $2, $3, $4
         ) RETURNING 
-          id, id_user, id_name_area, title, description
+          id, id_name_area, title, description
       `
     const responseDataBase = await PGHelper
       .getPool()
       .query(sql, [idUser, idNameTodoArea, title, description])
     const todoItem = {
-      user: {
-        id: responseDataBase.rows[0].id_user
-      },
-      todoItem: {
-        id: responseDataBase.rows[0].id,
-        title: responseDataBase.rows[0].title,
-        description: responseDataBase.rows[0].description,
-        idNameTodoArea: responseDataBase.rows[0].id_name_area
-      }
+      id: responseDataBase.rows[0].id,
+      title: responseDataBase.rows[0].title,
+      description: responseDataBase.rows[0].description,
+      idNameTodoArea: responseDataBase.rows[0].id_name_area
     }
     return todoItem
   }
@@ -49,7 +44,7 @@ implements InsertOneTodoItemRepository, UpdateOneTodoItemRespository {
         WHERE
           id = $1
         RETURNING 
-          id, id_user, id_name_area, title, description
+          id, id_name_area, title, description
       `
     const responseDataBase = await PGHelper
       .getPool()
@@ -61,15 +56,10 @@ implements InsertOneTodoItemRepository, UpdateOneTodoItemRespository {
         todoItem.description
       ])
     const resultTodoItem = {
-      user: {
-        id: responseDataBase.rows[0].id_user
-      },
-      todoItem: {
-        id: responseDataBase.rows[0].id,
-        title: responseDataBase.rows[0].title,
-        description: responseDataBase.rows[0].description,
-        idNameTodoArea: responseDataBase.rows[0].id_name_area
-      }
+      id: responseDataBase.rows[0].id,
+      title: responseDataBase.rows[0].title,
+      description: responseDataBase.rows[0].description,
+      idNameTodoArea: responseDataBase.rows[0].id_name_area
     }
     return resultTodoItem
   }

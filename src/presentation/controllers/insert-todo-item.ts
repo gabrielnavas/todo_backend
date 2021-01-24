@@ -30,7 +30,7 @@ export class InsertTodoItemController implements Controller {
       } as InsertTodoItem.Params
       const insertOk = await this.insertTodoItem.insertOne(insertTodoItemParams)
       if (!insertOk) return httpResponseBadRequest(new UnexpectedError())
-      return httpResponseOk()
+      return httpResponseOk(insertOk)
     } catch (error) {
       return httpResponseServerError(error)
     }

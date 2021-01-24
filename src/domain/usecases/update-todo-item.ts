@@ -14,5 +14,5 @@ export namespace UpdateTodoItem {
     todoItem: TodoItemModel
   }
 
-  export type Result = boolean
+  export type Result = TodoItemModel
 }

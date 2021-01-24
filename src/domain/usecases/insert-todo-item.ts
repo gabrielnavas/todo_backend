@@ -1,3 +1,5 @@
+import { TodoItemModel } from '../models/todo-item'
+
 export interface InsertTodoItem {
   insertOne (params: InsertTodoItem.Params): Promise<InsertTodoItem.Result>
 }
@@ -16,5 +18,5 @@ export namespace InsertTodoItem {
     todoItem: TodoItemParams
   }
 
-  export type Result = boolean
+  export type Result = TodoItemModel
 }

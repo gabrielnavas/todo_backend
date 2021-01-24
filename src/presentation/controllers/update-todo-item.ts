@@ -15,9 +15,9 @@ export class UpdateTodoItemController implements Controller {
       const error = await this.validation.validate(httpRequest.body)
       if (error) return httpResponseBadRequest(error)
       const updateTodoItemParams = this.mapUpdateHttpRequestToTodoItemParams(httpRequest)
-      const updateOk = await this.updateTodoItem.updateOne(updateTodoItemParams)
-      if (!updateOk) return httpResponseBadRequest(new UnexpectedError())
-      return httpResponseOk()
+      const todoItemUpdate = await this.updateTodoItem.updateOne(updateTodoItemParams)
+      if (!todoItemUpdate) return httpResponseBadRequest(new UnexpectedError())
+      return httpResponseOk(todoItemUpdate)
     } catch (error) {
       return httpResponseServerError(error)
     }
