@@ -1,9 +1,9 @@
-import { InsertOneTodoItemRespository } from '@/data/interfaces/insert-one-todo-item-repository'
+import { InsertOneTodoItemRepository } from '@/data/interfaces/insert-one-todo-item-repository'
 import { DbInsertTodoItem } from '@/data/usecases/db-insert-todo-item'
 
-const makeInsertOneTodoItemRespository = (): InsertOneTodoItemRespository => {
-  return new class InsertOneTodoItemRespositorySpy implements InsertOneTodoItemRespository {
-    async insertOne (params: InsertOneTodoItemRespository.Params): Promise<InsertOneTodoItemRespository.Result> {
+const makeInsertOneTodoItemRespository = (): InsertOneTodoItemRepository => {
+  return new class InsertOneTodoItemRepositorySpy implements InsertOneTodoItemRepository {
+    async insertOne (params: InsertOneTodoItemRepository.Params): Promise<InsertOneTodoItemRepository.Result> {
       return {
         todoItem: {
           id: 1,
@@ -19,7 +19,7 @@ const makeInsertOneTodoItemRespository = (): InsertOneTodoItemRespository => {
 
 type TypesSut = {
   sut: DbInsertTodoItem
-  insertOneTodoItemRespositorySpy: InsertOneTodoItemRespository
+  insertOneTodoItemRespositorySpy: InsertOneTodoItemRepository
 
 }
 
@@ -37,11 +37,11 @@ const makeSut = (): TypesSut => {
 describe('DbInsertTodoItem', () => {
   test('should call InsertTodoItemRepository with correct params', async () => {
     const {
-      sut, insertOneTodoItemRespositorySpy: insertOneTodoItemRespository
+      sut, insertOneTodoItemRespositorySpy: insertOneTodoItemRepository
     } = makeSut()
 
     const insertOneTodoItemRespositorySpy =
-      jest.spyOn(insertOneTodoItemRespository, 'insertOne')
+      jest.spyOn(insertOneTodoItemRepository, 'insertOne')
     const sutParams = {
       todoItem: {
         idNameTodoArea: 'any_todo_area_id',

@@ -1,10 +1,10 @@
 import { TodoItemModelRepository } from '../models/todo-item-model-repository'
 
-export interface InsertOneTodoItemRespository {
-  insertOne(params: InsertOneTodoItemRespository.Params): Promise<InsertOneTodoItemRespository.Result>
+export interface InsertOneTodoItemRepository {
+  insertOne(params: InsertOneTodoItemRepository.Params): Promise<InsertOneTodoItemRepository.Result>
 }
 
-export namespace InsertOneTodoItemRespository {
+export namespace InsertOneTodoItemRepository {
   export type Params = {
     todoItem: {
       idNameTodoArea: string

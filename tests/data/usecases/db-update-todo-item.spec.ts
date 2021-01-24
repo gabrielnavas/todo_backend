@@ -41,11 +41,11 @@ describe('DbInsertTodoItem', () => {
   test('should call InsertTodoItemRepository with correct params', async () => {
     const {
       sut,
-      updateOneTodoItemRespositorySpy: insertOneTodoItemRespository
+      updateOneTodoItemRespositorySpy: insertOneTodoItemRepository
     } = makeSut()
 
     const insertOneTodoItemRespositorySpy =
-      jest.spyOn(insertOneTodoItemRespository, 'updateOne')
+      jest.spyOn(insertOneTodoItemRepository, 'updateOne')
     const sutParams = {
       todoItem: {
         id: 1,
