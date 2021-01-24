@@ -123,7 +123,7 @@ describe('UpdateTodoItemController', () => {
       .toEqual(httpResponseBadRequest(new UnexpectedError()))
   })
 
-  test('should return 500 server error if insertTodoItem throws', async () => {
+  test('should return 500 server error if UpdateTodoItem throws', async () => {
     const { sut, updateTodoItemSpy } = makeSut()
     jest.spyOn(updateTodoItemSpy, 'updateOne')
       .mockRejectedValueOnce(new Error('any_error'))
