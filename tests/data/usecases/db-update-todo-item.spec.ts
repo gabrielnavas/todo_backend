@@ -97,7 +97,7 @@ describe('DbInsertTodoItem', () => {
         id: 1
       }
     } as UpdateTodoItem.Params
-    const insertOk = await sut.updateOne(sutParams)
-    expect(insertOk).toEqual(true)
+    const updateOk = await sut.updateOne(sutParams)
+    expect(updateOk).toEqual(true)
   })
 })
