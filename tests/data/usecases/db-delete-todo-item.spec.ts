@@ -4,12 +4,7 @@ import { DbDeleteTodoItem } from '@/data/usecases/db-delete.todo-item'
 const makeDeleteOneTodoItemRespository = (): DeleteOneTodoItemRepository => {
   return new class DeleteOneTodoItemRepositorySpy implements DeleteOneTodoItemRepository {
     async deleteOne (params: DeleteOneTodoItemRepository.Params): Promise<DeleteOneTodoItemRepository.Result> {
-      return {
-        id: 1,
-        idNameTodoArea: 'any_todo_area_id',
-        title: 'any_title',
-        description: 'any_description'
-      }
+      return true
     }
   }()
 }
@@ -57,7 +52,7 @@ describe('DbDeleteTodoItem', () => {
   test('should return false if InsertTodoItemRepository return null', async () => {
     const { sut, deleteOneTodoItemRespositorySpy } = makeSut()
     jest.spyOn(deleteOneTodoItemRespositorySpy, 'deleteOne')
-      .mockReturnValueOnce(null)
+      .mockResolvedValueOnce(false)
     const id = 1
     const todoItem = await sut.deleteOne(id)
     expect(todoItem).toEqual(false)

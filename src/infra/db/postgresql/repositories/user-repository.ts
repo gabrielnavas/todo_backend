@@ -48,7 +48,8 @@ FindOneUserByIdAndTokenRepository {
       WHERE 
         public."user".id = public."user_token_access".id_user and
         public."user".id = $1 and
-        public."user_token_access".token = $2
+        token = $2 and
+        invalid_at is null
     `
     const userMRepository = await PGHelper
       .getPool()

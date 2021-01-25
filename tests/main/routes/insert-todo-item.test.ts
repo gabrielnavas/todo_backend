@@ -128,7 +128,7 @@ describe('POST /insert_todo_item', () => {
     })
   })
 
-  describe('Expect 403 forbidden', () => {
+  describe('Expect 401 forbidden', () => {
     beforeEach(async () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
@@ -141,7 +141,7 @@ describe('POST /insert_todo_item', () => {
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
 
-    test('should return 403 on /api/signup if token not found', async done => {
+    test('should return 401 on /api/signup if token not found', async done => {
       const token = 'imATokenFake'
       await request(app)
         .post('/api/insert_todo_item')
@@ -150,18 +150,18 @@ describe('POST /insert_todo_item', () => {
           idNameTodoArea: 'any_todo_area_name',
           title: 'any_title'
         })
-        .expect(403)
+        .expect(401)
         .then(r => done())
     })
 
-    test('should return 403 on /api/signup if missing token', async done => {
+    test('should return 401 on /api/signup if missing token', async done => {
       await request(app)
         .post('/api/insert_todo_item')
         .send({
           idNameTodoArea: 'any_todo_area_name',
           title: 'any_title'
         })
-        .expect(403)
+        .expect(401)
         .then(r => done())
     })
   })

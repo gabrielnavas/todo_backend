@@ -2,10 +2,14 @@ import {
   InsertOneTodoItemRepository,
   UpdateOneTodoItemRespository
 } from '@/data/interfaces'
+import { DeleteOneTodoItemRepository } from '@/data/interfaces/delete-one-todo-item-repository'
 import { PGHelper } from '../helpers/pg-helper'
 
 export class TodoItemPostgreSQLRepository
-implements InsertOneTodoItemRepository, UpdateOneTodoItemRespository {
+implements
+  InsertOneTodoItemRepository,
+  UpdateOneTodoItemRespository,
+  DeleteOneTodoItemRepository {
   async insertOne (params: InsertOneTodoItemRepository.Params): Promise<InsertOneTodoItemRepository.Result> {
     const {
       todoItem: { description, title, idNameTodoArea },
@@ -62,5 +66,16 @@ implements InsertOneTodoItemRepository, UpdateOneTodoItemRespository {
       idNameTodoArea: responseDataBase.rows[0].id_name_area
     }
     return resultTodoItem
+  }
+
+  async deleteOne (id: DeleteOneTodoItemRepository.Params): Promise<DeleteOneTodoItemRepository.Result> {
+    const sql = `
+        DELETE FROM 
+          public."todo_item" 
+        WHERE
+          id = $1
+      `
+    const resultDelete = await PGHelper.getPool().query(sql, [id])
+    return resultDelete.rowCount > 0
   }
 }

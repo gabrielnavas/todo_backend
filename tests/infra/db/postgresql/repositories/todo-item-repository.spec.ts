@@ -139,4 +139,63 @@ describe('TodoItemPostgreSQLRepository', () => {
       expect(promise).rejects.toThrow(new Error('any_error'))
     })
   })
+
+  describe('TodoItemPostgreSQLRepository/deleteOne', () => {
+    beforeEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+    })
+
+    afterEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+    })
+    test('should call deleteOne() wich correct params', async () => {
+      const insertOneTodoRepository = new TodoItemPostgreSQLRepository()
+      const userRepository = new UserPostgreSQLRepository()
+      const user = await userRepository.insertOne({
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      })
+      const resultInsert = await insertOneTodoRepository.insertOne({
+        user: {
+          id: user.id
+        },
+        todoItem: {
+          title: 'any_title',
+          description: 'any_description',
+          idNameTodoArea: 'any_todo_name_area'
+        }
+      })
+      const sut = new TodoItemPostgreSQLRepository()
+      const resultDelete = await sut.deleteOne(resultInsert.id)
+      expect(resultDelete).toEqual(true)
+    })
+
+    test('should return throws if insertOne() throws', async () => {
+      const sut = new TodoItemPostgreSQLRepository()
+      const userRepository = new UserPostgreSQLRepository()
+      const params = {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+      const user = await userRepository.insertOne(params)
+      jest.spyOn(sut, 'insertOne').mockRejectedValueOnce(new Error('any_error'))
+      const promise = sut.insertOne({
+        user: {
+          id: user.id
+        },
+        todoItem: {
+          title: 'any_title',
+          description: 'any_description',
+          idNameTodoArea: 'any_todo_name_area'
+        }
+      })
+      expect(promise).rejects.toThrow(new Error('any_error'))
+    })
+  })
 })

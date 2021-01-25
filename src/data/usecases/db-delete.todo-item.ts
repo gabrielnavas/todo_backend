@@ -7,7 +7,7 @@ export class DbDeleteTodoItem implements DeleteTodoItem {
   ) {}
 
   async deleteOne (id: DeleteTodoItem.Params): Promise<DeleteTodoItem.Result> {
-    const todoItem = await this.deleteOneTodoItemRespository.deleteOne(id)
-    return !!todoItem
+    const deleteOk = await this.deleteOneTodoItemRespository.deleteOne(id)
+    return deleteOk
   }
 }

@@ -1,15 +1,17 @@
 import { Decrypter } from '@/data/interfaces'
 import { LoadUserAccountByIdAndToken } from '@/domain/usecases/load-user-account-by-id-token'
-import { AccessDeniedError } from '@/presentation/errors/access-denied-error'
-import { httpResponseForbidden, httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
+import { httpResponseOk, httpResponseServerError, httpResponseUnauthorized } from '@/presentation/helpers/http-helper'
 import { Middleware } from '@/presentation/interfaces/middleware'
 import { AuthenticationMiddleware } from '@/presentation/middlewares/authentication'
+import { UnauthorizedError } from '@/presentation/errors'
+
+const oneHourLast = 1000 * 60 * 60
 
 const makeDecrypter = (): Decrypter => {
   return new class DecrypterSpy implements Decrypter {
     async decrypt (ciphertext: string): Promise<Decrypter.ReturnType> {
       return {
-        issuedAt: 123,
+        issuedAt: oneHourLast,
         payload: { id: 1 }
       }
     }
@@ -68,7 +70,9 @@ describe('AuthenticationMiddleware', () => {
       accessToken: 'any_token'
     }
     const httpResponse = await sut.handle(sutParams)
-    expect(httpResponse).toEqual(httpResponseForbidden(new AccessDeniedError()))
+    expect(httpResponse).toEqual(
+      httpResponseUnauthorized(new UnauthorizedError()
+      ))
   })
 
   test('should call LoadUserAccountByIdAndToken by with correct access token', async () => {
@@ -88,11 +92,11 @@ describe('AuthenticationMiddleware', () => {
     expect(httpResponse).toEqual(httpResponseServerError(new Error('any_error')))
   })
 
-  test('should return forbidden 403 if LoadUserAccountByIdAndToken return null', async () => {
+  test('should return forbidden 401 if LoadUserAccountByIdAndToken return null', async () => {
     const { sut, loadUserAccountByTokenSpy } = makeSut()
     jest.spyOn(loadUserAccountByTokenSpy, 'loadOneByIdAndToken').mockReturnValueOnce(null)
     const httpResponse = await sut.handle<AuthenticationMiddleware.Params>({ accessToken: 'any_token' })
-    expect(httpResponse).toEqual(httpResponseForbidden(new AccessDeniedError()))
+    expect(httpResponse).toEqual(httpResponseUnauthorized(new UnauthorizedError()))
   })
 
   test('should return ok and a accountId if LoadUserAccountByIdAndToken return a user account ', async () => {

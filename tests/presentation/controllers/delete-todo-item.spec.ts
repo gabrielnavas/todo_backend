@@ -82,7 +82,7 @@ describe('DeleteTodoItemController', () => {
   test('should return 400 if DeleteTodoItem returns false', async () => {
     const { sut, deleteTodoItemSpy } = makeSut()
     jest.spyOn(deleteTodoItemSpy, 'deleteOne')
-      .mockReturnValueOnce(Promise.resolve(false))
+      .mockResolvedValueOnce(false)
     const httpRequest: HttpRequest = {
       accountId: 1,
       body: {

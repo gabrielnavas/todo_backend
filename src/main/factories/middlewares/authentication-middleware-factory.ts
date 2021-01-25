@@ -7,5 +7,8 @@ import env from '@/main/configs/env'
 export const authenticationMiddlewareFactory = (): Middleware => {
   const jwtAdapter = new JwtAdapter(env.jwtKeySecret)
   const dbLoadUserAccountByToken = dbLoadUserAccountByTokenFactory()
-  return new AuthenticationMiddleware(dbLoadUserAccountByToken, jwtAdapter)
+  return new AuthenticationMiddleware(
+    dbLoadUserAccountByToken,
+    jwtAdapter
+  )
 }

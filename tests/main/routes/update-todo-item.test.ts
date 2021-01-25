@@ -239,7 +239,7 @@ describe('POST /update_todo_item', () => {
     })
   })
 
-  describe('Expect 403 forbidden', () => {
+  describe('Expect 401 forbidden', () => {
     beforeEach(async () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
@@ -251,7 +251,7 @@ describe('POST /update_todo_item', () => {
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
-    test('should return 403 on UpdateOneTodoItem with correct params', async done => {
+    test('should return 401 on UpdateOneTodoItem with correct params', async done => {
       const createNewUserAccount = () => {
         return request(app)
           .post('/api/signup')
@@ -289,7 +289,7 @@ describe('POST /update_todo_item', () => {
         })
         .then(r => r)
       done()
-      expect(respTodoUpdated.status).toEqual(403)
+      expect(respTodoUpdated.status).toEqual(401)
     })
   })
 })

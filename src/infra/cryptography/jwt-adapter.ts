@@ -11,7 +11,6 @@ export class JwtAdapter implements Encrypter, Decrypter {
 
   async decrypt (ciphertext: string): Promise<Decrypter.ReturnType> {
     const { iat, ...rest } = await jwt.verify(ciphertext, this.secret) as any
-
     return {
       issuedAt: iat ? Number(iat) : 0,
       payload: rest

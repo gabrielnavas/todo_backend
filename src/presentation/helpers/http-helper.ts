@@ -15,7 +15,7 @@ export const httpResponseServerError = (error: Error) => ({
   body: error
 })
 
-export const httpResponseForbidden = (error: Error): HttpResponse => ({
-  statusCode: 403,
+export const httpResponseUnauthorized = (error: Error): HttpResponse => ({
+  statusCode: 401,
   body: error
 })
