@@ -12,6 +12,7 @@ import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 import { Authentication } from '@/domain/usecases/authentication'
 import { makeAuthenticationMock } from '../../data/mocks/mock-db-authentication'
+import { UnexpectedError } from '@/presentation/errors'
 
 const makeCreateUserAccount = (): CreateUserAccount => {
   class CreateUserAccountSpy implements CreateUserAccount {
@@ -103,7 +104,7 @@ describe('SignUpController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseServerError(anyError))
+    expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
 
   test('should return 400 if CreateUserAccount emails exists', async () => {
@@ -151,7 +152,7 @@ describe('SignUpController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseServerError(new Error()))
+    expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
 
   test('should return 200 a token and userName if ok', async () => {

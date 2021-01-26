@@ -19,7 +19,7 @@ export class UpdateTodoItemController implements Controller {
       if (!todoItemUpdate) return httpResponseBadRequest(new UnexpectedError())
       return httpResponseOk(todoItemUpdate)
     } catch (error) {
-      return httpResponseServerError(error)
+      return httpResponseServerError()
     }
   }
 

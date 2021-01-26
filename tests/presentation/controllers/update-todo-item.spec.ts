@@ -137,6 +137,6 @@ describe('UpdateTodoItemController', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse)
-      .toEqual(httpResponseServerError(new Error('any_error')))
+      .toEqual(httpResponseServerError(new UnexpectedError()))
   })
 })

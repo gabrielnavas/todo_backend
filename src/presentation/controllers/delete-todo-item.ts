@@ -17,7 +17,7 @@ export class DeleteTodoItemController implements Controller {
       if (!deleteOk) return httpResponseBadRequest(new UnexpectedError())
       return httpResponseOk()
     } catch (error) {
-      return httpResponseServerError(error)
+      return httpResponseServerError()
     }
   }
 }

@@ -128,7 +128,7 @@ describe('InsertTodoItemController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseServerError(new Error('any_error')))
+    expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
 
   test('should return ok if insertTodoItem ok', async () => {

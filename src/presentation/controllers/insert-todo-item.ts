@@ -30,7 +30,7 @@ export class InsertTodoItemController implements Controller {
       if (!insertOk) return httpResponseBadRequest(new UnexpectedError())
       return httpResponseOk(insertOk)
     } catch (error) {
-      return httpResponseServerError(error)
+      return httpResponseServerError()
     }
   }
 }

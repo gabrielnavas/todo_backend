@@ -18,7 +18,7 @@ export class LoginController implements Controller {
       if (!auth) return httpResponseBadRequest(new UnauthorizedError())
       return httpResponseOk(auth)
     } catch (error) {
-      return httpResponseServerError(error)
+      return httpResponseServerError()
     }
   }
 }

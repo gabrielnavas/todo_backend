@@ -1,6 +1,6 @@
 import { Authentication } from '@/domain/usecases/authentication'
 import { LoginController } from '@/presentation/controllers/login'
-import { MissingParamError } from '@/presentation/errors'
+import { MissingParamError, UnexpectedError } from '@/presentation/errors'
 import { UnauthorizedError } from '@/presentation/errors/unauthorized-error'
 import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
 import { Controller, HttpRequest, Validation } from '@/presentation/interfaces'
@@ -87,7 +87,7 @@ describe('LoginController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(httpResponseServerError(new Error()))
+    expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
 
   test('should 400 badRequest if email or password not found', async () => {
