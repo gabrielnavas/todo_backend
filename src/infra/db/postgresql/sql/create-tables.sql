@@ -55,8 +55,8 @@ CREATE TABLE public.user_token_access (
 	id serial NOT NULL,
 	id_user integer NOT NULL,
 	token varchar(8192) NOT NULL,
-	created_at date NOT NULL,
-	invalid_at date,
+	created_at timestamptz NOT NULL,
+	invalid_at timestamptz,
 	CONSTRAINT user_token_access_pk PRIMARY KEY (id)
 
 );

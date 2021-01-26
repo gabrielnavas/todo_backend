@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="4"
+<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" last-position="16,0" last-zoom="1" max-obj-count="4"
 	 default-schema="public" default-owner="postgres">
 <database name="todo" encoding="UTF8" lc-collate="en_US.utf8" lc-ctype="en_US.utf8" is-template="false" allow-conns="true">
 	<role name="postgres"/>
@@ -51,10 +51,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="varchar" length="8192"/>
 	</column>
 	<column name="created_at" not-null="true">
-		<type name="date" length="0"/>
+		<type name="timestamptz" length="0"/>
 	</column>
 	<column name="invalid_at">
-		<type name="date" length="0"/>
+		<type name="timestamptz" length="0"/>
 	</column>
 	<constraint name="user_token_access_pk" type="pk-constr" table="public.user_token_access">
 		<columns names="id" ref-type="src-columns"/>
