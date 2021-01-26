@@ -1,10 +1,14 @@
-import { InvalidateOneUserTokenAccessByIdRepository }
-  from '../interfaces/invalidate-one-user-token-access-repository'
+import {
+  InvalidateOneUserTokenAccessByUserIdRepository
+} from '../interfaces/invalidate-one-user-token-access-repository'
 import { DbLogoff } from '@/data/usecases/db-logoff'
 
-const makeUpdateOneUserTokenAccessRepository = (): InvalidateOneUserTokenAccessByIdRepository => {
-  return new class InvalidateOneUserTokenAccessByIdRepositorySpy implements InvalidateOneUserTokenAccessByIdRepository {
-    async invalidateDateById (params: InvalidateOneUserTokenAccessByIdRepository.Params): Promise<InvalidateOneUserTokenAccessByIdRepository.Result> {
+const makeUpdateOneUserTokenAccessRepository = ():
+InvalidateOneUserTokenAccessByUserIdRepository => {
+  class InvalidateOneUserTokenAccessByIdRepositorySpy
+  implements InvalidateOneUserTokenAccessByUserIdRepository {
+    async invalidateDateByUserId (params: InvalidateOneUserTokenAccessByUserIdRepository.Params):
+      Promise<InvalidateOneUserTokenAccessByUserIdRepository.Result> {
       return {
         id: 1,
         token: 'any_token',
@@ -12,12 +16,13 @@ const makeUpdateOneUserTokenAccessRepository = (): InvalidateOneUserTokenAccessB
         invalidAt: undefined
       }
     }
-  }()
+  }
+  return new InvalidateOneUserTokenAccessByIdRepositorySpy()
 }
 
 type TypesSut = {
   sut:DbLogoff
-  updateOneUserTokenAccessRepositorySpy: InvalidateOneUserTokenAccessByIdRepository
+  updateOneUserTokenAccessRepositorySpy: InvalidateOneUserTokenAccessByUserIdRepository
 }
 
 const makeSut = (): TypesSut => {
@@ -34,20 +39,20 @@ const makeSut = (): TypesSut => {
 describe('DbLogoff', () => {
   test('should call InvalidateOneUserTokenAccessByIdRepository with correct params', async () => {
     const { sut, updateOneUserTokenAccessRepositorySpy: updateOneUserTokenAccessRepository } = makeSut()
-    const updateOneUserTokenAccessRepositorySpy = jest.spyOn(updateOneUserTokenAccessRepository, 'invalidateDateById')
+    const updateOneUserTokenAccessRepositorySpy = jest.spyOn(updateOneUserTokenAccessRepository, 'invalidateDateByUserId')
     const sutParams = {
-      idUserToken: 1
+      userId: 1
     }
     await sut.logoff(sutParams)
-    expect(updateOneUserTokenAccessRepositorySpy).toHaveBeenCalledWith(sutParams.idUserToken)
+    expect(updateOneUserTokenAccessRepositorySpy).toHaveBeenCalledWith(sutParams.userId)
   })
 
   test('should throws if InvalidateOneUserTokenAccessByIdRepository', async () => {
     const { sut, updateOneUserTokenAccessRepositorySpy } = makeSut()
-    jest.spyOn(updateOneUserTokenAccessRepositorySpy, 'invalidateDateById')
+    jest.spyOn(updateOneUserTokenAccessRepositorySpy, 'invalidateDateByUserId')
       .mockRejectedValueOnce(new Error())
     const sutParams = {
-      idUserToken: 1
+      userId: 1
     }
     const promise = sut.logoff(sutParams)
     expect(promise).rejects.toThrow()
@@ -55,19 +60,19 @@ describe('DbLogoff', () => {
 
   test('should null if InvalidateOneUserTokenAccessByIdRepository returns null', async () => {
     const { sut, updateOneUserTokenAccessRepositorySpy } = makeSut()
-    jest.spyOn(updateOneUserTokenAccessRepositorySpy, 'invalidateDateById')
+    jest.spyOn(updateOneUserTokenAccessRepositorySpy, 'invalidateDateByUserId')
       .mockResolvedValueOnce(null)
     const sutParams = {
-      idUserToken: 1
+      userId: 1
     }
     const userTokenAcessModel = await sut.logoff(sutParams)
     expect(userTokenAcessModel).toEqual(userTokenAcessModel)
   })
 
-  test('should user token acess model if InvalidateOneUserTokenAccessByIdRepository returns user token acess model', async () => {
+  test('should return UserTokenAccessModel if InvalidateOneUserTokenAccessByIdRepository returns UserTokenAccessModelRepository', async () => {
     const { sut } = makeSut()
     const sutParams = {
-      idUserToken: 1
+      userId: 1
     }
     const userTokenAcessModel = await sut.logoff(sutParams)
     expect(userTokenAcessModel).toEqual(userTokenAcessModel)

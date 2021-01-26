@@ -49,7 +49,7 @@ describe('UserTokenAccessPostgreSQLRepository', () => {
     })
   })
 
-  describe('invalidateDateById()', () => {
+  describe('invalidateDateByIdUser()', () => {
     beforeEach(async () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
@@ -61,7 +61,7 @@ describe('UserTokenAccessPostgreSQLRepository', () => {
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
 
-    test('should call invalidateDateById() with correct params and returns the correct result', async () => {
+    test('should call invalidateDateByIdUser() with correct params and returns the correct result', async () => {
       const sut = new UserTokenAccessPostgreSQLRepository()
       const userInsertToken = new UserTokenAccessPostgreSQLRepository()
       const userRepository = new UserPostgreSQLRepository()
@@ -74,29 +74,19 @@ describe('UserTokenAccessPostgreSQLRepository', () => {
         idUser: userResp.id,
         token: 'any_token'
       })
-      const userTokenModel = await sut.invalidateDateById(userTokenResp.id)
+      const userTokenModel = await sut.invalidateDateByUserId(userResp.id)
       expect(userTokenModel.id).toBeGreaterThanOrEqual(1)
       expect(userTokenModel.createdAt).toEqual(userTokenResp.createdAt)
       expect(userTokenModel.invalidAt).toBeTruthy()
       expect(userTokenModel.token).toBe('any_token')
     })
 
-    test('should throws if invalidateDateById() throws', async () => {
+    test('should throws if invalidateDateByIdUser() throws', async () => {
       const sut = new UserTokenAccessPostgreSQLRepository()
-      const userInsertToken = new UserTokenAccessPostgreSQLRepository()
-      const userRepository = new UserPostgreSQLRepository()
-      jest.spyOn(sut, 'invalidateDateById')
+      jest.spyOn(sut, 'invalidateDateByUserId')
         .mockRejectedValueOnce(new Error())
-      const userResp = await userRepository.insertOne({
-        email: 'any_email',
-        name: 'any_name',
-        password: 'any_password'
-      })
-      const userTokenResp = await userInsertToken.insertOne({
-        idUser: userResp.id,
-        token: 'any_token'
-      })
-      const promise = sut.invalidateDateById(userTokenResp.id)
+      const anyId = 1
+      const promise = sut.invalidateDateByUserId(anyId)
       expect(promise).rejects.toThrow()
     })
   })

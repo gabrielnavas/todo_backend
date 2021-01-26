@@ -6,7 +6,7 @@ export interface Logoff {
 
 export namespace Logoff {
   export type Params = {
-    idUserToken: number
+    userId: number
   }
   export type Result = UserTokenAccessModel
 }

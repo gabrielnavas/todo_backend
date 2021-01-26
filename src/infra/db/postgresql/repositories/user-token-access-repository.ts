@@ -1,10 +1,10 @@
 import { InsertOneUserTokenAccessRepository } from '@/data/interfaces/insert-one-user-token-access-repository'
-import { InvalidateOneUserTokenAccessByIdRepository } from '@/data/interfaces/invalidate-one-user-token-access-repository'
+import { InvalidateOneUserTokenAccessByUserIdRepository } from '@/data/interfaces/invalidate-one-user-token-access-repository'
 import { PGHelper } from '../helpers/pg-helper'
 
 export class UserTokenAccessPostgreSQLRepository
 implements InsertOneUserTokenAccessRepository,
-    InvalidateOneUserTokenAccessByIdRepository {
+InvalidateOneUserTokenAccessByUserIdRepository {
   insertOne = async (params: InsertOneUserTokenAccessRepository.Params):
     Promise<InsertOneUserTokenAccessRepository.Result> => {
     const sql = `
@@ -25,9 +25,9 @@ implements InsertOneUserTokenAccessRepository,
     }
   }
 
-  invalidateDateById = async (id: InvalidateOneUserTokenAccessByIdRepository.Params):
-      Promise<InvalidateOneUserTokenAccessByIdRepository.Result> => {
-    const sql = `
+  invalidateDateByUserId = async (idUser: InvalidateOneUserTokenAccessByUserIdRepository.Params):
+      Promise<InvalidateOneUserTokenAccessByUserIdRepository.Result> => {
+    const sqlInvalidtedUserTokenForUpdated = `
         UPDATE 
           PUBLIC."user_token_access"
         SET
@@ -39,16 +39,34 @@ implements InsertOneUserTokenAccessRepository,
           token, 
           created_at,
           invalid_at
-      `
+    `
+    const sqlFindUserTokenById = `
+        SELECT id
+        FROM public."user_token_access"
+        WHERE id_user = $1
+    `
+    let respUpdated = undefined as any
     const dateUTCNow = new Date(new Date().toUTCString())
-    const resp = await PGHelper
-      .getPool()
-      .query(sql, [id, dateUTCNow])
+    const clientDB = await PGHelper.getNewConnection()
+    try {
+      await clientDB.query('BEGIN')
+      const userTokenAccessResp = await clientDB.query(sqlFindUserTokenById, [idUser])
+      if (userTokenAccessResp.rowCount === 0) return null
+      const { id: idUserToken } = userTokenAccessResp.rows[0]
+      respUpdated = await clientDB.query(sqlInvalidtedUserTokenForUpdated, [idUserToken, dateUTCNow])
+      await clientDB.query('COMMIT')
+    } catch (error) {
+      await clientDB.query('ROLLBACK')
+      throw error
+    } finally {
+      await clientDB.release()
+    }
+
     return {
-      id: resp.rows[0].id_user_token,
-      token: resp.rows[0].token,
-      createdAt: resp.rows[0].created_at,
-      invalidAt: resp.rows[0].invalid_at
+      id: respUpdated.rows[0].id_user_token,
+      token: respUpdated.rows[0].token,
+      createdAt: respUpdated.rows[0].created_at,
+      invalidAt: respUpdated.rows[0].invalid_at
     }
   }
 }

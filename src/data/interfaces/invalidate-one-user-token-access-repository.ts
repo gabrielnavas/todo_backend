@@ -1,10 +1,10 @@
 import { UserTokenAccessModelRepository } from '../models/user-token-access-model-repository'
 
-export interface InvalidateOneUserTokenAccessByIdRepository {
-  invalidateDateById(id: InvalidateOneUserTokenAccessByIdRepository.Params): Promise<InvalidateOneUserTokenAccessByIdRepository.Result>
+export interface InvalidateOneUserTokenAccessByUserIdRepository {
+  invalidateDateByUserId(idUser: InvalidateOneUserTokenAccessByUserIdRepository.Params): Promise<InvalidateOneUserTokenAccessByUserIdRepository.Result>
 }
 
-export namespace InvalidateOneUserTokenAccessByIdRepository {
+export namespace InvalidateOneUserTokenAccessByUserIdRepository {
   export type Params = number
   export type Result = UserTokenAccessModelRepository
 }
