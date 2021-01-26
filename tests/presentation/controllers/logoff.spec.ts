@@ -2,7 +2,7 @@ import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from 
 import { Controller, HttpRequest, Validation } from '../interfaces'
 import { ValidationSpy } from '../mocks/mock-validation'
 import { LogoffController } from '@/presentation/controllers/logoff'
-import { NegativeOrZeroValueError, UnexpectedError } from '@/presentation/errors'
+import { MinNumberError, UnexpectedError } from '@/presentation/errors'
 import { Logoff } from '@/domain/usecases/logoff'
 
 const makeuserLogoff = (): Logoff => {
@@ -43,13 +43,14 @@ describe('LogoffController', () => {
 
   test('should return 400 badRequest if validations returns error', async () => {
     const { sut, validationSpy } = makeSut()
+    const minLength = 0
     jest.spyOn(validationSpy, 'validate')
-      .mockReturnValueOnce(new NegativeOrZeroValueError('accountId'))
+      .mockReturnValueOnce(new MinNumberError('accountId', minLength))
     const httpRequest: HttpRequest = {
       accountId: 0
     }
     const response = await sut.handle(httpRequest)
-    expect(response).toEqual(httpResponseBadRequest(new NegativeOrZeroValueError('accountId')))
+    expect(response).toEqual(httpResponseBadRequest(new MinNumberError('accountId', minLength)))
   })
 
   test('should call Logoff with correct user ID', async () => {
