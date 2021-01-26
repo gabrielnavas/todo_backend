@@ -7,7 +7,6 @@ export class DbLogoff implements Logoff {
   ) { }
 
   async logoff (params: Logoff.Params): Promise<Logoff.Result> {
-    const userTokenAccessModel = await this.invalidateOneUserTokenAccessRepository.invalidateDateByUserId(params.userId)
-    return userTokenAccessModel
+    await this.invalidateOneUserTokenAccessRepository.invalidateDateByUserId(params.userId)
   }
 }

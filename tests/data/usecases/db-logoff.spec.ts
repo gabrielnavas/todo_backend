@@ -74,7 +74,7 @@ describe('DbLogoff', () => {
     const sutParams = {
       userId: 1
     }
-    const userTokenAcessModel = await sut.logoff(sutParams)
-    expect(userTokenAcessModel).toEqual(userTokenAcessModel)
+    const resp = await sut.logoff(sutParams)
+    expect(resp).toEqual(undefined)
   })
 })

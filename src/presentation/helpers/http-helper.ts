@@ -1,4 +1,5 @@
 import { HttpResponse } from '@/presentation/interfaces'
+import { UnexpectedError } from '../errors'
 
 export const httpResponseOk = (body?: any): HttpResponse => ({
   statusCode: 200,
@@ -10,9 +11,9 @@ export const httpResponseBadRequest = (error: Error): HttpResponse => ({
   body: error
 })
 
-export const httpResponseServerError = (error: Error) => ({
+export const httpResponseServerError = (error?: Error) => ({
   statusCode: 500,
-  body: error
+  body: error || new UnexpectedError()
 })
 
 export const httpResponseUnauthorized = (error: Error): HttpResponse => ({
