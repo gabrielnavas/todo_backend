@@ -153,8 +153,8 @@ describe('TodoItemPostgreSQLRepository', () => {
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
     test('should call deleteOne() wich correct params', async () => {
-      const insertOneTodoRepository = new TodoItemPostgreSQLRepository()
       const userRepository = new UserPostgreSQLRepository()
+      const insertOneTodoRepository = new TodoItemPostgreSQLRepository()
       const user = await userRepository.insertOne({
         name: 'any_name',
         email: 'any_email',
@@ -196,6 +196,67 @@ describe('TodoItemPostgreSQLRepository', () => {
         }
       })
       expect(promise).rejects.toThrow(new Error('any_error'))
+    })
+  })
+
+  describe('TodoItemPostgreSQLRepository/findAllByUserId', () => {
+    beforeEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+    })
+
+    afterEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+      await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+    })
+
+    test('should findAllByUserId() with correct id and return an list todo items', async () => {
+      const userRepository = new UserPostgreSQLRepository()
+      const insertOneTodoRepository = new TodoItemPostgreSQLRepository()
+      const user = await userRepository.insertOne({
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      })
+      await insertOneTodoRepository.insertOne({
+        user: {
+          id: user.id
+        },
+        todoItem: {
+          title: 'any_title',
+          description: 'any_description',
+          idNameTodoArea: 'any_todo_name_area_1'
+        }
+      })
+      await insertOneTodoRepository.insertOne({
+        user: {
+          id: user.id
+        },
+        todoItem: {
+          title: 'any_title',
+          description: 'any_description',
+          idNameTodoArea: 'any_todo_name_area_2'
+        }
+      })
+      await insertOneTodoRepository.insertOne({
+        user: {
+          id: user.id
+        },
+        todoItem: {
+          title: 'any_title',
+          description: 'any_description',
+          idNameTodoArea: 'any_todo_name_area_3'
+        }
+      })
+
+      const sut = new TodoItemPostgreSQLRepository()
+      const todoItems = await sut.findAllByUserId(user.id)
+      expect(todoItems.length).toBe(3)
+      expect(todoItems[0].idNameTodoArea).toEqual('any_todo_name_area_1')
+      expect(todoItems[1].idNameTodoArea).toEqual('any_todo_name_area_2')
+      expect(todoItems[2].userId).toEqual(user.id)
     })
   })
 })
