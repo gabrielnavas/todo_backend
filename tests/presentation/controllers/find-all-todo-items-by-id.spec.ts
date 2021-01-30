@@ -1,7 +1,7 @@
 import { TodoItemModel } from '@/domain/models/todo-item'
 import { FindAllTodoItemsByUserId } from '@/domain/usecases/find-all-todo-by-user-id'
 import { Controller, HttpRequest } from '../interfaces'
-import { FindAllTodoItemsController } from '@/presentation/controllers/find-all-todo-items'
+import { FindAllTodoItemsByUserIdController } from '@/presentation/controllers/find-all-todo-items-by-user-id'
 import { httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
 import { UnexpectedError } from '@/presentation/errors'
 
@@ -46,7 +46,7 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const findAllTodoItemsSpy = makeFindAllTodoItems()
-  const sut = new FindAllTodoItemsController(
+  const sut = new FindAllTodoItemsByUserIdController(
     findAllTodoItemsSpy
   )
   return {
