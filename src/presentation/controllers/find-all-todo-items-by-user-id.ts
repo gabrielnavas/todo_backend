@@ -11,7 +11,6 @@ export class FindAllTodoItemsByUserIdController implements Controller {
     try {
       const { accountId } = httpRequest
       const todoItems = await this.findAllTodoItemsByUserId.findAllByUserId(accountId)
-      console.log(todoItems)
       return httpResponseOk(todoItems)
     } catch (error) {
       return httpResponseServerError()
