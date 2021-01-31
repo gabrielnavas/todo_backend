@@ -2,7 +2,7 @@ import { MatrixClassification } from '@/data/interfaces/matrix-classification'
 import { TodoItemModel } from '@/domain/models/todo-item'
 
 export class MatrixClassicationTodoItems implements MatrixClassification {
-  readonly matrix: TodoItemModel[][] = []
+  private matrix: TodoItemModel[][] = []
 
   addList (todoItems: TodoItemModel[]): void {
     todoItems.forEach(todoItem => {
@@ -11,6 +11,14 @@ export class MatrixClassicationTodoItems implements MatrixClassification {
       }
       this.checkHasExistsAndInsertTodoItem(todoItem)
     })
+  }
+
+  clear (): void {
+    this.matrix = []
+  }
+
+  getMatrix (): TodoItemModel[][] {
+    return this.matrix
   }
 
   private insertOneArrayWithTodoItem (todoItem: TodoItemModel): void {

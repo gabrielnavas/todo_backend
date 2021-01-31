@@ -6,9 +6,9 @@ export interface FindAllTodoItemsByUserIdRepository {
 }
 
 export namespace FindAllTodoItemsByUserIdRepository {
-  type TodoItemMRepositoryWithUserId = (
+  export type TodoItemMRepositoryWithUserId = (
     TodoItemModelRepository & {userId: number}
-  )[]
+  )
   export type Params = number
-  export type Result = TodoItemMRepositoryWithUserId
+  export type Result = TodoItemMRepositoryWithUserId[]
 }

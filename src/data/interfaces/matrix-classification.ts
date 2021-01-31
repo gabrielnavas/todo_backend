@@ -1,4 +1,5 @@
 export interface MatrixClassification {
-  matrix: any[][]
   addList(listItems: any): void
+  clear(): void
+  getMatrix(): any
 }

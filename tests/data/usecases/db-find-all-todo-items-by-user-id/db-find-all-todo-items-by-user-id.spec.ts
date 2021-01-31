@@ -1,14 +1,15 @@
 import { FindAllTodoItemsByUserIdRepository } from '../../interfaces/find-all-todo-items-by-user-id-repository'
 import { makeMatrixClassication, makeTodoItemsListWithRandomTodoAreas } from '../../mocks/mock-db-find-all-todo-items-by-user-id'
-import { TodoItemModelRepository } from '../../models/todo-item-model-repository'
 import { DbFindAllTodoItemsByUserId } from '@/data/usecases/db-find-all-todo-items-by-user-id'
 import { MatrixClassification } from '../../interfaces/matrix-classification'
 
-const todoItemsList = makeTodoItemsListWithRandomTodoAreas()
+const userId = 1
+const todoItemsList = makeTodoItemsListWithRandomTodoAreas(userId)
 
 const makeFindAllTodoItemsByUserIdRepository = (): FindAllTodoItemsByUserIdRepository => {
   class FindAllTodoItemsByUserIdRepositorySpy implements FindAllTodoItemsByUserIdRepository {
-    findAllByUserId (userId: number): Promise<TodoItemModelRepository[]> {
+    findAllByUserId (userId: FindAllTodoItemsByUserIdRepository.Params):
+    Promise<FindAllTodoItemsByUserIdRepository.Result> {
       return Promise.resolve(todoItemsList)
     }
   }
@@ -61,7 +62,7 @@ describe('DbFindAllTodoItemsByUserId', () => {
     const matrixClassicationSpy = jest.spyOn(matrixClassication, 'addList')
     const userIdParam = 1
     await sut.findAllByUserId(userIdParam)
-    expect(matrixClassicationSpy).toHaveBeenCalledWith(makeTodoItemsListWithRandomTodoAreas())
+    expect(matrixClassicationSpy).toHaveBeenCalledWith(makeTodoItemsListWithRandomTodoAreas(userIdParam))
   })
 
   test('should return an matrix list if ok', async () => {

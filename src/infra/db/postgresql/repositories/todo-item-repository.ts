@@ -96,12 +96,13 @@ implements
           id_user = $1
       `
     const result = await PGHelper.getPool().query(sql, [userId])
-    return result.rows.map(todoItemDB => ({
+    const newList = result.rows.map(todoItemDB => ({
       id: todoItemDB.id,
       userId: todoItemDB.id_user,
       idNameTodoArea: todoItemDB.id_name_area,
       title: todoItemDB.title,
       description: todoItemDB.description
-    }))
+    }) as FindAllTodoItemsByUserIdRepository.TodoItemMRepositoryWithUserId)
+    return newList
   }
 }

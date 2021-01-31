@@ -12,7 +12,9 @@ export class DbFindAllTodoItemsByUserId implements FindAllTodoItemsByUserId {
     const todoItems = await this.findAllTodoItemsByUserIdRepository.findAllByUserId(userId)
     if (todoItems.length > 0) {
       this.matrixClassificationTodoItems.addList(todoItems)
-      return this.matrixClassificationTodoItems.matrix
+      const matrix = this.matrixClassificationTodoItems.getMatrix()
+      this.matrixClassificationTodoItems.clear()
+      return matrix
     }
     return []
   }
