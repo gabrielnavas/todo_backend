@@ -27,7 +27,7 @@ export const makeTodoItemsListWithRandomTodoAreas = (userId?: number): TodoItemM
 
 export const makeMatrixClassication = (): MatrixClassification => {
   class MatrixClassicationTodoItemsSpy implements MatrixClassification {
-    matrix: TodoItemModel[][] = [
+    private matrix: TodoItemModel[][] = [
       Array<TodoItemModel>(1).fill({
         id: 1,
         idNameTodoArea: 'todo',
@@ -48,7 +48,11 @@ export const makeMatrixClassication = (): MatrixClassification => {
       }).map((t, i) => { t.id = i + t.id; return t })
     ]
 
-    addList (item: any): void {}
+    addList (item: TodoItemModel[][]): void {}
+    clear (): void {}
+    getMatrix (): TodoItemModel[][] {
+      return this.matrix
+    }
   }
   return new MatrixClassicationTodoItemsSpy()
 }

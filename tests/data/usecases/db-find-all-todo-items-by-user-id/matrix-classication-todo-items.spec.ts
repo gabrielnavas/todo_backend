@@ -4,7 +4,19 @@ import { MatrixClassicationTodoItems } from '@/data/usecases/db-find-all-todo-it
 describe('MatrixClassicationTodoItems', () => {
   test('should return a correct matrix classificated ', () => {
     const sut = new MatrixClassicationTodoItems()
-    sut.addList(makeTodoItemsListWithRandomTodoAreas())
-    expect(sut.matrix).toEqual(makeMatrixClassication().matrix)
+    const bruteList = makeTodoItemsListWithRandomTodoAreas()
+    const mockCorrectMatrix = makeMatrixClassication()
+    sut.addList(bruteList)
+    expect(sut.getMatrix()).toEqual(mockCorrectMatrix.getMatrix())
+  })
+
+  test('should clear the matrix if clear is called', () => {
+    const sut = new MatrixClassicationTodoItems()
+    const bruteList = makeTodoItemsListWithRandomTodoAreas()
+    const mockCorrectMatrix = makeMatrixClassication()
+    sut.addList(bruteList)
+    expect(sut.getMatrix()).toEqual(mockCorrectMatrix.getMatrix())
+    sut.clear()
+    expect(sut.getMatrix()).toEqual([])
   })
 })

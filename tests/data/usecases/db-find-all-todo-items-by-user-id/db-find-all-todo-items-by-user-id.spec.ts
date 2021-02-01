@@ -8,9 +8,9 @@ const todoItemsList = makeTodoItemsListWithRandomTodoAreas(userId)
 
 const makeFindAllTodoItemsByUserIdRepository = (): FindAllTodoItemsByUserIdRepository => {
   class FindAllTodoItemsByUserIdRepositorySpy implements FindAllTodoItemsByUserIdRepository {
-    findAllByUserId (userId: FindAllTodoItemsByUserIdRepository.Params):
+    async findAllByUserId (userId: FindAllTodoItemsByUserIdRepository.Params):
     Promise<FindAllTodoItemsByUserIdRepository.Result> {
-      return Promise.resolve(todoItemsList)
+      return todoItemsList.map(item => ({ ...item, userId }))
     }
   }
   return new FindAllTodoItemsByUserIdRepositorySpy()
@@ -69,7 +69,15 @@ describe('DbFindAllTodoItemsByUserId', () => {
     const { sut } = makeSut()
     const userIdParam = 1
     const todoItemsList = await sut.findAllByUserId(userIdParam)
-    expect(todoItemsList).toEqual(makeMatrixClassication().matrix)
+    expect(todoItemsList).toEqual(makeMatrixClassication().getMatrix())
+  })
+
+  test('should call clear of the matrix', async () => {
+    const { sut, matrixClassicationSpy: matrixClassication } = makeSut()
+    const matrixClassicationClearSpy = jest.spyOn(matrixClassication, 'clear')
+    const userIdParam = 1
+    await sut.findAllByUserId(userIdParam)
+    expect(matrixClassicationClearSpy).toHaveBeenNthCalledWith(1)
   })
 
   test('should return empty list if DbFindAllTodoItemsByUserIdRepository return empty list', async () => {
