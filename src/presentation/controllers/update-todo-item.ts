@@ -1,7 +1,7 @@
 import { UpdateTodoItem } from '@/domain/usecases/update-todo-item'
 import { UnexpectedError } from '../errors'
 import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from '../helpers/http-helper'
-import { Controller, HttpRequest, HttpResponse, Validation } from '../interfaces'
+import { Controller, HttpResponse, Validation } from '../interfaces'
 
 export class UpdateTodoItemController implements Controller {
   constructor (
@@ -10,9 +10,9 @@ export class UpdateTodoItemController implements Controller {
 
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (httpRequest: UpdateTodoItemController.HttpRequest): Promise<HttpResponse> {
     try {
-      const error = await this.validation.validate(httpRequest.body)
+      const error = await this.validation.validate(httpRequest)
       if (error) return httpResponseBadRequest(error)
       const updateTodoItemParams = this.mapUpdateHttpRequestToTodoItemParams(httpRequest)
       const todoItemUpdate = await this.updateTodoItem.updateOne(updateTodoItemParams)
@@ -23,15 +23,26 @@ export class UpdateTodoItemController implements Controller {
     }
   }
 
-  private mapUpdateHttpRequestToTodoItemParams ({ body, accountId }: HttpRequest): UpdateTodoItem.Params {
+  private mapUpdateHttpRequestToTodoItemParams (params: UpdateTodoItemController.HttpRequest): UpdateTodoItem.Params {
+    const { accountId, ...rest } = params
     return {
       user: { id: accountId },
       todoItem: {
-        id: body.idTodoItem,
-        idNameTodoArea: body.idNameTodoArea,
-        title: body.title,
-        description: body.description
+        id: rest.idTodoItem,
+        idNameTodoArea: rest.idNameTodoArea,
+        title: rest.title,
+        description: rest.description
       }
     }
+  }
+}
+
+export namespace UpdateTodoItemController {
+  export type HttpRequest = {
+    accountId: number
+    idTodoItem: number,
+    idNameTodoArea: string,
+    title: string,
+    description: string
   }
 }

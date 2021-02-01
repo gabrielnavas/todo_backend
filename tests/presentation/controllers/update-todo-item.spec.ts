@@ -11,7 +11,6 @@ import {
 } from '@/presentation/helpers/http-helper'
 import {
   Controller,
-  HttpRequest,
   Validation
 } from '@/presentation/interfaces'
 
@@ -50,32 +49,28 @@ describe('UpdateTodoItemController', () => {
     test('should call validate with correct params', async () => {
       const { sut, validateSpy: validate } = makeSut()
       const validateSpy = jest.spyOn(validate, 'validate')
-      const httpRequest: HttpRequest = {
+      const httpRequest = {
         accountId: 1,
-        body: {
-          idTodoItem: 1,
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
-      }
+        idTodoItem: 1,
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
+      } as UpdateTodoItemController.HttpRequest
       await sut.handle(httpRequest)
-      expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+      expect(validateSpy).toHaveBeenCalledWith(httpRequest)
     })
 
-    test('should return 400 if validations fail', async () => {
+    test('should return 400 if validations fails', async () => {
       const { sut, validateSpy } = makeSut()
-      jest.spyOn(validateSpy, 'validate').mockReturnValueOnce(new MissingParamError('name'))
-      const httpRequest: HttpRequest = {
+      jest.spyOn(validateSpy, 'validate').mockReturnValueOnce(new MissingParamError('title'))
+      const httpRequest = {
         accountId: 1,
-        body: {
-          idTodoItem: 1,
-          idNameTodoArea: 'any_id_todo_area',
-          description: 'any_description'
-        }
-      }
+        idTodoItem: 1,
+        idNameTodoArea: 'any_id_todo_area',
+        description: 'any_description'
+      } as UpdateTodoItemController.HttpRequest
       const response = await sut.handle(httpRequest)
-      expect(response).toEqual(httpResponseBadRequest(new MissingParamError('name')))
+      expect(response).toEqual(httpResponseBadRequest(new MissingParamError('title')))
     })
   })
 
@@ -83,23 +78,21 @@ describe('UpdateTodoItemController', () => {
     test('should call UpdateTodoItem with correct params', async () => {
       const { sut, updateTodoItemSpy: updateTodoItem } = makeSut()
       const updateTodoItemSpy = jest.spyOn(updateTodoItem, 'updateOne')
-      const httpRequest: HttpRequest = {
+      const httpRequest = {
         accountId: 1,
-        body: {
-          idTodoItem: 1,
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        }
-      }
+        idTodoItem: 1,
+        idNameTodoArea: 'any_id_todo_area',
+        title: 'any_title',
+        description: 'any_description'
+      } as UpdateTodoItemController.HttpRequest
       await sut.handle(httpRequest)
       expect(updateTodoItemSpy).toHaveBeenLastCalledWith({
         user: { id: httpRequest.accountId },
         todoItem: {
-          id: httpRequest.body.idTodoItem,
-          idNameTodoArea: httpRequest.body.idNameTodoArea,
-          title: httpRequest.body.title,
-          description: httpRequest.body.description
+          id: httpRequest.idTodoItem,
+          idNameTodoArea: httpRequest.idNameTodoArea,
+          title: httpRequest.title,
+          description: httpRequest.description
         }
       })
     })
@@ -109,15 +102,13 @@ describe('UpdateTodoItemController', () => {
     const { sut, updateTodoItemSpy } = makeSut()
     jest.spyOn(updateTodoItemSpy, 'updateOne')
       .mockReturnValueOnce(Promise.resolve(null))
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1,
-        idNameTodoArea: 'any_id_todo_area',
-        title: 'any_title',
-        description: 'any_description'
-      }
-    }
+      idTodoItem: 1,
+      idNameTodoArea: 'any_id_todo_area',
+      title: 'any_title',
+      description: 'any_description'
+    } as UpdateTodoItemController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse)
       .toEqual(httpResponseBadRequest(new UnexpectedError()))
@@ -127,14 +118,13 @@ describe('UpdateTodoItemController', () => {
     const { sut, updateTodoItemSpy } = makeSut()
     jest.spyOn(updateTodoItemSpy, 'updateOne')
       .mockRejectedValueOnce(new Error('any_error'))
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idNameTodoArea: 'any_id_todo_area',
-        title: 'any_title',
-        description: 'any_description'
-      }
-    }
+      idTodoItem: 1,
+      idNameTodoArea: 'any_id_todo_area',
+      title: 'any_title',
+      description: 'any_description'
+    } as UpdateTodoItemController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse)
       .toEqual(httpResponseServerError(new UnexpectedError()))

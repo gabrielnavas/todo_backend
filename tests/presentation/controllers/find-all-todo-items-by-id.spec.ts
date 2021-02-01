@@ -1,6 +1,6 @@
 import { TodoItemModel } from '@/domain/models/todo-item'
 import { FindAllTodoItemsByUserId } from '@/domain/usecases/find-all-todo-by-user-id'
-import { Controller, HttpRequest } from '../interfaces'
+import { Controller } from '../interfaces'
 import { FindAllTodoItemsByUserIdController } from '@/presentation/controllers/find-all-todo-items-by-user-id'
 import { httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
 import { UnexpectedError } from '@/presentation/errors'
@@ -61,7 +61,7 @@ describe('FindAllTodoItems', () => {
     const findAllTodoItemsSpy = jest.spyOn(findAllTodoItems, 'findAllByUserId')
     const httpRequest = {
       accountId: 1
-    } as HttpRequest
+    } as FindAllTodoItemsByUserIdController.HttpRequest
     await sut.handle(httpRequest)
     expect(findAllTodoItemsSpy).toHaveBeenCalledWith(httpRequest.accountId)
   })
@@ -72,7 +72,7 @@ describe('FindAllTodoItems', () => {
       .mockRejectedValueOnce(new Error('any_error'))
     const httpRequest = {
       accountId: 1
-    } as HttpRequest
+    } as FindAllTodoItemsByUserIdController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
@@ -83,7 +83,7 @@ describe('FindAllTodoItems', () => {
       .mockResolvedValueOnce([])
     const httpRequest = {
       accountId: 1
-    } as HttpRequest
+    } as FindAllTodoItemsByUserIdController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk([]))
   })
@@ -92,7 +92,7 @@ describe('FindAllTodoItems', () => {
     const { sut } = makeSut()
     const httpRequest = {
       accountId: 1
-    } as HttpRequest
+    } as FindAllTodoItemsByUserIdController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk(makeTodoItemMatrix()))
   })

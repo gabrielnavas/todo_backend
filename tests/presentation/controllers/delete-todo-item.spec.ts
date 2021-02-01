@@ -1,6 +1,5 @@
 import {
   Controller,
-  HttpRequest,
   Validation
 } from '@/presentation/interfaces'
 import { ValidationSpy } from '../mocks/mock-validation'
@@ -42,24 +41,22 @@ describe('DeleteTodoItemController', () => {
   test('should call validations with correct body data', async () => {
     const { sut, validationSpy: validation } = makeSut()
     const validationSpy = jest.spyOn(validation, 'validate')
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1
-      }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     await sut.handle(httpRequest)
-    expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(validationSpy).toHaveBeenCalledWith(httpRequest)
   })
 
   test('should return 400 badRequest if validations returns error', async () => {
     const { sut, validationSpy } = makeSut()
     jest.spyOn(validationSpy, 'validate')
       .mockReturnValueOnce(new MissingParamError('idTodoItem'))
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: { }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     const response = await sut.handle(httpRequest)
     expect(response).toEqual(
       httpResponseBadRequest(new MissingParamError('idTodoItem'))
@@ -69,26 +66,22 @@ describe('DeleteTodoItemController', () => {
   test('should call DeleteTodoItem usecase with correct params', async () => {
     const { sut, deleteTodoItemSpy: deleteTodoItem } = makeSut()
     const deleteTodoItemSpy = jest.spyOn(deleteTodoItem, 'deleteOne')
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1
-      }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     await sut.handle(httpRequest)
-    expect(deleteTodoItemSpy).toHaveBeenCalledWith(httpRequest.body.idTodoItem)
+    expect(deleteTodoItemSpy).toHaveBeenCalledWith(httpRequest.idTodoItem)
   })
 
   test('should return 400 if DeleteTodoItem returns false', async () => {
     const { sut, deleteTodoItemSpy } = makeSut()
     jest.spyOn(deleteTodoItemSpy, 'deleteOne')
       .mockResolvedValueOnce(false)
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1
-      }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse)
       .toEqual(httpResponseBadRequest(new UnexpectedError()))
@@ -99,12 +92,10 @@ describe('DeleteTodoItemController', () => {
     jest.spyOn(deleteTodoItemSpy, 'deleteOne').mockRejectedValueOnce(
       new Error('any_error')
     )
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1
-      }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(
       httpResponseServerError(new UnexpectedError())
@@ -113,12 +104,10 @@ describe('DeleteTodoItemController', () => {
 
   test('should return ok if insertTodoItem ok', async () => {
     const { sut } = makeSut()
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1,
-      body: {
-        idTodoItem: 1
-      }
-    }
+      idTodoItem: 1
+    } as DeleteTodoItemController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk())
   })

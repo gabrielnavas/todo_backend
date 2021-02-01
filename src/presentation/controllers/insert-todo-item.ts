@@ -7,7 +7,6 @@ import {
 } from '../helpers/http-helper'
 import {
   Controller,
-  HttpRequest,
   HttpResponse,
   Validation
 } from '../interfaces'
@@ -18,13 +17,14 @@ export class InsertTodoItemController implements Controller {
     private readonly insertTodoItem: InsertTodoItem
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (httpRequest: InsertTodoItemController.HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest)
       if (error) return httpResponseBadRequest(error)
+      const { accountId, ...todoItem } = httpRequest
       const insertTodoItemParams = {
-        todoItem: httpRequest.body,
-        user: { id: httpRequest.accountId }
+        todoItem,
+        user: { id: accountId }
       } as InsertTodoItem.Params
       const insertOk = await this.insertTodoItem.insertOne(insertTodoItemParams)
       if (!insertOk) return httpResponseBadRequest(new UnexpectedError())
@@ -32,5 +32,14 @@ export class InsertTodoItemController implements Controller {
     } catch (error) {
       return httpResponseServerError()
     }
+  }
+}
+
+export namespace InsertTodoItemController {
+  export type HttpRequest = {
+    accountId: number
+    idNameTodoArea: string
+    title: string
+    description: string
   }
 }

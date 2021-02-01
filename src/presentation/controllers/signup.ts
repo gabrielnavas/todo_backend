@@ -1,6 +1,5 @@
 import {
   Controller,
-  HttpRequest,
   HttpResponse
 } from '@/presentation/interfaces'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
@@ -20,18 +19,27 @@ export class SignUpController implements Controller {
     private readonly getAuthentication: Authentication
   ) {}
 
-  handle = async (httpRequest: HttpRequest): Promise<HttpResponse> => {
+  handle = async (httpRequest: SignUpController.HttpRequest): Promise<HttpResponse> => {
     try {
-      const error = this.validateBody.validate(httpRequest.body)
+      const error = this.validateBody.validate(httpRequest)
       if (error) return httpResponseBadRequest(error)
-      const { passwordConfirmation, ...userParams } = httpRequest.body
+      const { passwordConfirmation, ...userParams } = httpRequest
       const userCreatedOk = await this.userInsertOne.createUser(userParams)
       if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
-      const { email, password } = httpRequest.body
+      const { email, password } = httpRequest
       const authResult = await this.getAuthentication.authenticate({ email, password })
       return httpResponseOk(authResult)
     } catch (error) {
       return httpResponseServerError()
     }
+  }
+}
+
+export namespace SignUpController {
+  export type HttpRequest = {
+    name: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string
   }
 }

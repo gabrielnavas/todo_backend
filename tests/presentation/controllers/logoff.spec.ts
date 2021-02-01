@@ -1,5 +1,5 @@
 import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
-import { Controller, HttpRequest, Validation } from '../interfaces'
+import { Controller, Validation } from '../interfaces'
 import { ValidationSpy } from '../mocks/mock-validation'
 import { LogoffController } from '@/presentation/controllers/logoff'
 import { MinNumberError, UnexpectedError } from '@/presentation/errors'
@@ -34,9 +34,9 @@ describe('LogoffController', () => {
   test('should call validations with correct body data', async () => {
     const { sut, validationSpy: validation } = makeSut()
     const validationSpy = jest.spyOn(validation, 'validate')
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1
-    }
+    } as LogoffController.HttpRequest
     await sut.handle(httpRequest)
     expect(validationSpy).toHaveBeenLastCalledWith(httpRequest.accountId)
   })
@@ -46,9 +46,9 @@ describe('LogoffController', () => {
     const minLength = 0
     jest.spyOn(validationSpy, 'validate')
       .mockReturnValueOnce(new MinNumberError('accountId', minLength))
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 0
-    }
+    } as LogoffController.HttpRequest
     const response = await sut.handle(httpRequest)
     expect(response).toEqual(httpResponseBadRequest(new MinNumberError('accountId', minLength)))
   })
@@ -56,9 +56,9 @@ describe('LogoffController', () => {
   test('should call Logoff with correct user ID', async () => {
     const { sut, logoffSpy: logoff } = makeSut()
     const logoffSpy = jest.spyOn(logoff, 'logoff')
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1
-    }
+    } as LogoffController.HttpRequest
     await sut.handle(httpRequest)
     expect(logoffSpy).toHaveBeenCalledWith({ userId: httpRequest.accountId })
   })
@@ -66,18 +66,18 @@ describe('LogoffController', () => {
   test('should call Logoff with correct user ID', async () => {
     const { sut, logoffSpy } = makeSut()
     jest.spyOn(logoffSpy, 'logoff').mockRejectedValueOnce(new Error('any_error'))
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1
-    }
+    } as LogoffController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
 
   test('should return a userTokenUpdated if Logoff return userTokenUpdated', async () => {
     const { sut } = makeSut()
-    const httpRequest: HttpRequest = {
+    const httpRequest = {
       accountId: 1
-    }
+    } as LogoffController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseOk())
   })

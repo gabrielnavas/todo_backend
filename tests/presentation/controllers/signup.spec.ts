@@ -7,7 +7,7 @@ import {
 } from '@/presentation/helpers/http-helper'
 import { Validation } from '@/presentation/interfaces/validation'
 import { ValidationSpy } from '../mocks/mock-validation'
-import { Controller, HttpRequest } from '../../../src/presentation/interfaces'
+import { Controller } from '../../../src/presentation/interfaces'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 import { Authentication } from '@/domain/usecases/authentication'
@@ -47,28 +47,26 @@ describe('SignUpController', () => {
   test('should call validations with correct body data', async () => {
     const { sut, validationSpy: validation } = makeSut()
     const validationSpy = jest.spyOn(validation, 'validate')
-    const httpRequest: HttpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+    const httpRequest = {
+      name: 'any_name',
+      email: 'any_name',
+      password: 'any_name',
+      passwordConfirmation: 'any_name'
+
+    } as SignUpController.HttpRequest
     await sut.handle(httpRequest)
-    expect(validationSpy).toHaveBeenLastCalledWith(httpRequest.body)
+    expect(validationSpy).toHaveBeenLastCalledWith(httpRequest)
   })
 
   test('should return 400 if validations fail', async () => {
     const { sut, validationSpy } = makeSut()
     jest.spyOn(validationSpy, 'validate').mockReturnValueOnce(new MissingParamError('name'))
-    const httpRequest: HttpRequest = {
-      body: {
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+    const httpRequest = {
+      email: 'any_name',
+      password: 'any_name',
+      passwordConfirmation: 'any_name'
+
+    } as SignUpController.HttpRequest
     const response = await sut.handle(httpRequest)
     expect(response).toEqual(httpResponseBadRequest(new MissingParamError('name')))
   })
@@ -77,15 +75,14 @@ describe('SignUpController', () => {
     const { sut, createUserAccountSpy: createUserAccount } = makeSut()
     const createUserAccountSpy = jest.spyOn(createUserAccount, 'createUser')
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+      name: 'any_name',
+      email: 'any_name',
+      password: 'any_name',
+      passwordConfirmation: 'any_name'
+
+    } as SignUpController.HttpRequest
     await sut.handle(httpRequest)
-    const { passwordConfirmation, ...userParams } = httpRequest.body
+    const { passwordConfirmation, ...userParams } = httpRequest
     expect(createUserAccountSpy).toHaveBeenLastCalledWith(userParams)
   })
 
@@ -96,13 +93,12 @@ describe('SignUpController', () => {
       throw anyError
     })
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+      name: 'any_name',
+      email: 'any_name',
+      password: 'any_name',
+      passwordConfirmation: 'any_name'
+
+    } as SignUpController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
@@ -111,13 +107,12 @@ describe('SignUpController', () => {
     const { sut, createUserAccountSpy } = makeSut()
     jest.spyOn(createUserAccountSpy, 'createUser').mockReturnValueOnce(null)
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+      name: 'any_name',
+      email: 'any_name_exists',
+      password: 'any_name',
+      passwordConfirmation: 'any_name'
+
+    } as SignUpController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseBadRequest(new EmailInUseError()))
   })
@@ -126,14 +121,13 @@ describe('SignUpController', () => {
     const { sut, authenticationSpy: authentication } = makeSut()
     const authenticationSpy = jest.spyOn(authentication, 'authenticate')
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
-    const { email, password } = httpRequest.body
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+
+    } as SignUpController.HttpRequest
+    const { email, password } = httpRequest
     await sut.handle(httpRequest)
     expect(authenticationSpy).toHaveBeenCalledWith({ email, password })
   })
@@ -144,13 +138,12 @@ describe('SignUpController', () => {
       throw new Error()
     })
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_name',
-        password: 'any_name',
-        passwordConfirmation: 'any_name'
-      }
-    }
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+
+    } as SignUpController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
   })
@@ -158,18 +151,17 @@ describe('SignUpController', () => {
   test('should return 200 a token and userName if ok', async () => {
     const { sut } = makeSut()
     const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
-      }
-    }
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+
+    } as SignUpController.HttpRequest
     const httpResponse = await sut.handle(httpRequest)
     const bodyReturn = {
       token: 'any_token',
-      userName: httpRequest.body.name,
-      email: httpRequest.body.email
+      userName: httpRequest.name,
+      email: httpRequest.email
     } as Authentication.Result
     expect(httpResponse).toEqual(httpResponseOk(bodyReturn))
   })

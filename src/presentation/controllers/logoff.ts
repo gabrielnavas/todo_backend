@@ -1,7 +1,6 @@
-import { InvalidateOneUserTokenAccessByUserIdRepository } from '@/data/interfaces/invalidate-one-user-token-access-repository'
 import { Logoff } from '@/domain/usecases/logoff'
 import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from '../helpers/http-helper'
-import { Controller, HttpRequest, HttpResponse, Validation } from '../interfaces'
+import { Controller, HttpResponse, Validation } from '../interfaces'
 
 export class LogoffController implements Controller {
   constructor (
@@ -9,7 +8,7 @@ export class LogoffController implements Controller {
     private readonly userLogoff: Logoff
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (httpRequest: LogoffController.HttpRequest): Promise<HttpResponse> {
     try {
       const error = await this.validation.validate(httpRequest.accountId)
       if (error) return httpResponseBadRequest(error)
@@ -18,5 +17,11 @@ export class LogoffController implements Controller {
     } catch (error) {
       return httpResponseServerError()
     }
+  }
+}
+
+export namespace LogoffController {
+  export type HttpRequest = {
+    accountId: number
   }
 }
