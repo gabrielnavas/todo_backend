@@ -3,7 +3,7 @@ import request from 'supertest'
 import app from '@/main/configs/app'
 import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 
-describe('POST /update_todo_item', () => {
+describe('UPDATE /todo/:idTodoItem', () => {
   describe('Expected success 200', () => {
     beforeEach(async () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
@@ -45,17 +45,14 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .put('/api/todo')
+        .put(`/api/todo/${respTodoInserted.body.id}`)
         .set('x-access-token', token)
         .send({
-          idTodoItem: respTodoInserted.body.id,
           idNameTodoArea: 'any_id_todo_area',
           title: 'any_title',
           description: 'any_description'
         })
-        .then(r => {
-          return r
-        })
+        .then(r => r)
       done()
       expect(respTodoUpdated.status).toEqual(200)
       expect(respTodoUpdated.body.id).toBeGreaterThanOrEqual(1)
@@ -76,36 +73,6 @@ describe('POST /update_todo_item', () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
-    })
-
-    test('should return 400 on /api/signup missing idTodoItem', async done => {
-      const createNewUserAccount = () => {
-        return request(app)
-          .post('/api/signup')
-          .send({
-            name: 'Gabriel Navas',
-            email: 'gabrielnavas@gmail.com',
-            password: '123456',
-            passwordConfirmation: '123456'
-          })
-          .expect(200)
-          .then(r => r)
-      }
-      const responseSignup = await createNewUserAccount()
-      const token = responseSignup.body.token
-      const respTodoUpdated = await request(app)
-        .put('/api/todo')
-        .set('x-access-token', token)
-        .send({
-          idNameTodoArea: 'any_id_todo_area',
-          title: 'any_title',
-          description: 'any_description'
-        })
-        .then(r => {
-          return r
-        })
-      done()
-      expect(respTodoUpdated.status).toEqual(400)
     })
 
     test('should return 400 on /api/signup missing idNameTodoArea', async done => {
@@ -137,10 +104,9 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .put('/api/todo')
+        .put(`/api/todo/${respTodoInserted.body.id}`)
         .set('x-access-token', token)
         .send({
-          idTodoItem: respTodoInserted.body.id,
           title: 'any_title',
           description: 'any_description'
         })
@@ -180,12 +146,10 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .put('/api/todo')
+        .put(`/api/todo/${respTodoInserted.body.id}`)
         .set('x-access-token', token)
         .send({
-          idTodoItem: respTodoInserted.body.id,
           idNameTodoArea: 'any_id_todo_area',
-
           description: 'any_description'
         })
         .then(r => {
@@ -193,6 +157,50 @@ describe('POST /update_todo_item', () => {
         })
       done()
       expect(respTodoUpdated.status).toEqual(400)
+    })
+
+    describe('Expect 404 not found', () => {
+      beforeEach(async () => {
+        await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+        await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+        await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+      })
+
+      afterEach(async () => {
+        await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
+        await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
+        await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
+      })
+
+      test('should return 400 on /api/signup missing idTodoItem', async done => {
+        const createNewUserAccount = () => {
+          return request(app)
+            .post('/api/signup')
+            .send({
+              name: 'Gabriel Navas',
+              email: 'gabrielnavas@gmail.com',
+              password: '123456',
+              passwordConfirmation: '123456'
+            })
+            .expect(200)
+            .then(r => r)
+        }
+        const responseSignup = await createNewUserAccount()
+        const token = responseSignup.body.token
+        const respTodoUpdated = await request(app)
+          .put('/todo/undefined')
+          .set('x-access-token', token)
+          .send({
+            idNameTodoArea: 'any_id_todo_area',
+            title: 'any_title',
+            description: 'any_description'
+          })
+          .then(r => {
+            return r
+          })
+        done()
+        expect(respTodoUpdated.status).toEqual(404)
+      })
     })
 
     test('should return 400 on /api/signup missing description', async done => {
@@ -224,10 +232,9 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .put('/api/todo')
+        .put(`/api/todo/${respTodoInserted.body.id}`)
         .set('x-access-token', token)
         .send({
-          idTodoItem: respTodoInserted.body.id,
           idNameTodoArea: 'any_id_todo_area',
           title: 'any_title'
         })
@@ -280,9 +287,8 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .put('/api/todo')
+        .put(`/api/todo/${respTodoInserted.body.id}`)
         .send({
-          idTodoItem: respTodoInserted.body.id,
           idNameTodoArea: 'any_id_todo_area',
           title: 'any_title',
           description: 'any_description'
