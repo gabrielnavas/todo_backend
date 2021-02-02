@@ -29,7 +29,7 @@ describe('POST /insert_todo_item', () => {
         .then(async res => {
           const token = res.body.token
           await request(app)
-            .post('/api/insert_todo_item')
+            .post('/api/todo')
             .set('x-access-token', token)
             .send({
               idNameTodoArea: 'any_id_todo_area',
@@ -68,7 +68,7 @@ describe('POST /insert_todo_item', () => {
         .then(async res => {
           const token = res.body.token
           await request(app)
-            .post('/api/insert_todo_item')
+            .post('/api/todo')
             .set('x-access-token', token)
             .send({
               title: 'any_title',
@@ -92,7 +92,7 @@ describe('POST /insert_todo_item', () => {
         .then(async res => {
           const token = res.body.token
           await request(app)
-            .post('/api/insert_todo_item')
+            .post('/api/todo')
             .set('x-access-token', token)
             .send({
               idNameTodoArea: 'any_todo_area_name',
@@ -116,7 +116,7 @@ describe('POST /insert_todo_item', () => {
         .then(async res => {
           const token = res.body.token
           await request(app)
-            .post('/api/insert_todo_item')
+            .post('/api/todo')
             .set('x-access-token', token)
             .send({
               idNameTodoArea: 'any_todo_area_name',
@@ -144,7 +144,7 @@ describe('POST /insert_todo_item', () => {
     test('should return 401 on /api/signup if token not found', async done => {
       const token = 'imATokenFake'
       await request(app)
-        .post('/api/insert_todo_item')
+        .post('/api/todo')
         .set('x-access-token', token)
         .send({
           idNameTodoArea: 'any_todo_area_name',
@@ -156,7 +156,7 @@ describe('POST /insert_todo_item', () => {
 
     test('should return 401 on /api/signup if missing token', async done => {
       await request(app)
-        .post('/api/insert_todo_item')
+        .post('/api/todo')
         .send({
           idNameTodoArea: 'any_todo_area_name',
           title: 'any_title'

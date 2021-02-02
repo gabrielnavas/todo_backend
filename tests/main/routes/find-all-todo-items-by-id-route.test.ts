@@ -28,7 +28,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
         .expect(200)
         .then(res => res.body.token)
       await request(app)
-        .post('/api/insert_todo_item')
+        .post('/api/todo')
         .set('x-access-token', token)
         .send({
           idNameTodoArea: 'any_id_todo_area1',
@@ -37,7 +37,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
         })
         .expect(200)
       await request(app)
-        .post('/api/insert_todo_item')
+        .post('/api/todo')
         .set('x-access-token', token)
         .send({
           idNameTodoArea: 'any_id_todo_area1',
@@ -46,7 +46,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
         })
         .expect(200)
       await request(app)
-        .post('/api/insert_todo_item')
+        .post('/api/todo')
         .set('x-access-token', token)
         .send({
           idNameTodoArea: 'any_id_todo_area2',
@@ -55,7 +55,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
         })
         .expect(200)
       const resp = await request(app)
-        .get('/api/find_all_todo_items_by_user_id')
+        .get('/api/todo')
         .set('x-access-token', token)
         .send()
         .expect(200)
@@ -78,7 +78,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
         .expect(200)
         .then(res => res.body.token)
       const resp = await request(app)
-        .get('/api/find_all_todo_items_by_user_id')
+        .get('/api/todo')
         .set('x-access-token', token)
         .send()
         .expect(200)
@@ -103,7 +103,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
     test('should return 401, with incorrect token', async done => {
       const token = 'any_token'
       await request(app)
-        .get('/api/find_all_todo_items_by_user_id')
+        .get('/api/todo')
         .set('x-access-token', token)
         .send()
         .expect(401)
@@ -112,7 +112,7 @@ describe('GET /find_all_todo_items_by_user_id', () => {
 
     test('should return 401, without token', async done => {
       await request(app)
-        .get('/api/find_all_todo_items_by_user_id')
+        .get('/api/todo')
         .send()
         .expect(401)
       done()

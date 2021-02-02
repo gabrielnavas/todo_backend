@@ -3,7 +3,7 @@ import request from 'supertest'
 import app from '@/main/configs/app'
 import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 
-describe('POST /delete_todo_item', () => {
+describe('DELETE /todo', () => {
   describe('Expect success 200', () => {
     beforeEach(async () => {
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
@@ -31,7 +31,7 @@ describe('POST /delete_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -45,7 +45,7 @@ describe('POST /delete_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoItemInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .delete(`/api/delete_todo_item/${respTodoItemInserted.body.id}`)
+        .delete(`/api/todo/${respTodoItemInserted.body.id}`)
         .set('x-access-token', token)
         .then(r => r)
       done()
@@ -82,7 +82,7 @@ describe('POST /delete_todo_item', () => {
       const responseSignup = await createNewUserAccount()
       const token = responseSignup.body.token
       const respTodoUpdated = await request(app)
-        .delete('/api/delete_todo_item/0')
+        .delete('/api/todo/0')
         .set('x-access-token', token)
         .then(r => r)
       done()
@@ -105,7 +105,7 @@ describe('POST /delete_todo_item', () => {
       const responseSignup = await createNewUserAccount()
       const token = responseSignup.body.token
       const respTodoUpdated = await request(app)
-        .delete('/api/delete_todo_item/-1')
+        .delete('/api/todo/-1')
         .set('x-access-token', token)
         .then(r => r)
       done()
@@ -142,7 +142,7 @@ describe('POST /delete_todo_item', () => {
       const responseSignup = await createNewUserAccount()
       const token = responseSignup.body.token
       const respTodoUpdated = await request(app)
-        .delete('/api/delete_todo_item')
+        .delete('/api/todo')
         .set('x-access-token', token)
         .then(r => r)
       done()
@@ -166,7 +166,7 @@ describe('POST /delete_todo_item', () => {
     test('should return 401 on /api/signup if token not found', async done => {
       const token = 'imATokenFake'
       await request(app)
-        .delete('/api/delete_todo_item/1')
+        .delete('/api/todo/1')
         .set('x-access-token', token)
         .expect(401)
         .then(r => done())
@@ -174,7 +174,7 @@ describe('POST /delete_todo_item', () => {
 
     test('should return 401 on /api/signup if missing token', async done => {
       await request(app)
-        .delete('/api/delete_todo_item/1')
+        .delete('/api/todo/1')
         .expect(401)
         .then(r => done())
     })

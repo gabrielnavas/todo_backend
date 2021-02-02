@@ -31,7 +31,7 @@ describe('POST /update_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -45,7 +45,7 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .set('x-access-token', token)
         .send({
           idTodoItem: respTodoInserted.body.id,
@@ -94,7 +94,7 @@ describe('POST /update_todo_item', () => {
       const responseSignup = await createNewUserAccount()
       const token = responseSignup.body.token
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .set('x-access-token', token)
         .send({
           idNameTodoArea: 'any_id_todo_area',
@@ -123,7 +123,7 @@ describe('POST /update_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -137,7 +137,7 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .set('x-access-token', token)
         .send({
           idTodoItem: respTodoInserted.body.id,
@@ -166,7 +166,7 @@ describe('POST /update_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -180,7 +180,7 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .set('x-access-token', token)
         .send({
           idTodoItem: respTodoInserted.body.id,
@@ -210,7 +210,7 @@ describe('POST /update_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -224,7 +224,7 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .set('x-access-token', token)
         .send({
           idTodoItem: respTodoInserted.body.id,
@@ -266,7 +266,7 @@ describe('POST /update_todo_item', () => {
       }
       const insertNewTodoItem = () => {
         return request(app)
-          .post('/api/insert_todo_item')
+          .post('/api/todo')
           .set('x-access-token', token)
           .send({
             idNameTodoArea: 'any_id_todo_area',
@@ -280,7 +280,7 @@ describe('POST /update_todo_item', () => {
       const token = responseSignup.body.token
       const respTodoInserted = await insertNewTodoItem()
       const respTodoUpdated = await request(app)
-        .post('/api/update_todo_item')
+        .put('/api/todo')
         .send({
           idTodoItem: respTodoInserted.body.id,
           idNameTodoArea: 'any_id_todo_area',

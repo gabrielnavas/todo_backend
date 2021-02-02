@@ -7,5 +7,5 @@ import {
 import { authentication } from '../middlewares/authentication'
 
 export default (route: Router) => {
-  route.delete('/delete_todo_item/:idTodoItem', authentication, adaptRoute(deleteTodoItemControllerFactory()))
+  route.delete('/todo/:idTodoItem', authentication, adaptRoute(deleteTodoItemControllerFactory()))
 }

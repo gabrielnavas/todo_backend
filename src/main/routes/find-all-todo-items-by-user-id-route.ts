@@ -6,7 +6,7 @@ import { authentication } from '../middlewares/authentication'
 
 export default (route: Router) => {
   route.get(
-    '/find_all_todo_items_by_user_id',
+    '/todo',
     authentication,
     adaptRoute(findAllTodoItemsByUserIdControllerFactory())
   )

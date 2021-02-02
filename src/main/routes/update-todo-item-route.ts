@@ -7,5 +7,5 @@ import {
 import { authentication } from '../middlewares/authentication'
 
 export default (route: Router) => {
-  route.post('/update_todo_item', authentication, adaptRoute(updateTodoItemControllerFactory()))
+  route.put('/todo', authentication, adaptRoute(updateTodoItemControllerFactory()))
 }
