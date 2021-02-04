@@ -11,6 +11,7 @@ const makeCorrectAmbientPool = () => {
       password: env.database_passsword
     })
   }
+
   return new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: true
