@@ -7,7 +7,8 @@ export class PGHelper {
     port: Number(env.database_port),
     database: env.database_name,
     user: env.database_user,
-    password: env.database_passsword
+    password: env.database_passsword,
+    ssl: !['localhost'].includes(env.database_host)
   })
 
   static getPool = () => {
