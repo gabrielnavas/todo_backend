@@ -27,5 +27,7 @@ export default {
   ...makeDataBaseConfig(),
 
   // encrypter key
-  jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret'
+  jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret',
+
+  nodeEnv: process.env.NODE_ENV
 }
