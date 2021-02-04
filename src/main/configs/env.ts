@@ -21,7 +21,7 @@ const makeDataBaseConfig = () =>
 
 export default {
   // server configs
-  server_port: process.env.SERVER_PORT || 3030,
+  server_port: process.env.SERVER_PORT || 3000,
 
   // database configs
   ...makeDataBaseConfig(),
