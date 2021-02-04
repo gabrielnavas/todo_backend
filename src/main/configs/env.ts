@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const makeDataBaseConfig = () =>
-  process.env.NODE_ENV === 'test' // security.. :)
+  process.env.NODE_ENV === 'test'
     ? {
         database_host: 'localhost',
         database_port: '5432',
