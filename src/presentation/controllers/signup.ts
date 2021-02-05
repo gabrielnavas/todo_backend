@@ -23,10 +23,9 @@ export class SignUpController implements Controller {
     try {
       const error = this.validateBody.validate(httpRequest)
       if (error) return httpResponseBadRequest(error)
-      const { passwordConfirmation, ...userParams } = httpRequest
-      const userCreatedOk = await this.userInsertOne.createUser(userParams)
+      const { email, name, password } = httpRequest
+      const userCreatedOk = await this.userInsertOne.createUser({ email, name, password })
       if (!userCreatedOk) return httpResponseBadRequest(new EmailInUseError())
-      const { email, password } = httpRequest
       const authResult = await this.getAuthentication.authenticate({ email, password })
       return httpResponseOk(authResult)
     } catch (error) {

@@ -17,5 +17,5 @@ export default {
   // encrypter key
   jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret',
 
-  nodeEnv: process.env.NODE_ENV
+  nodeEnv: process.env.NODE_ENV || 'development'
 }

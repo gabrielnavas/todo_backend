@@ -1,8 +1,12 @@
 import { Pool } from 'pg'
 import env from '@/main/configs/env'
 
+import dotenv from 'dotenv'
+
+dotenv.config()
+
 const makeCorrectAmbientPool = () => {
-  if (env.nodeEnv === 'test') {
+  if (['test', 'development'].includes(env.nodeEnv)) {
     return new Pool({
       host: env.databaseHost,
       port: Number(env.databasePort),
