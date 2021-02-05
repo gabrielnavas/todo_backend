@@ -2,29 +2,17 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const makeDataBaseConfig = () =>
-  process.env.NODE_ENV === 'test'
-    ? {
-        database_host: 'localhost',
-        database_port: '5432',
-        database_name: 'todo',
-        database_user: 'postgres',
-        database_passsword: 'postgres'
-      }
-    : {
-        database_host: process.env.DATABASE_HOST || 'localhost',
-        database_port: process.env.DATABASE_PORT || '5432',
-        database_name: process.env.DATABASE_NAME || 'todo',
-        database_user: process.env.DATABASE_USER || 'postgres',
-        database_passsword: process.env.DATABASE_PASSWORD || 'postgres'
-      }
-
 export default {
   // server configs
-  server_port: process.env.PORT || 3000,
+  serverPort: process.env.PORT || 3030,
 
   // database configs
-  ...makeDataBaseConfig(),
+  databaseHost: 'localhost',
+  databasePort: '5432',
+  databaseName: 'todo',
+  databaseUser: 'postgres',
+  databasePasssword: 'postgres',
+  databaseUrl: process.env.DATABASE_URL,
 
   // encrypter key
   jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret',

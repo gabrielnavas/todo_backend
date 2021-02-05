@@ -4,16 +4,16 @@ import env from '@/main/configs/env'
 const makeCorrectAmbientPool = () => {
   if (env.nodeEnv === 'test') {
     return new Pool({
-      host: env.database_host,
-      port: Number(env.database_port),
-      database: env.database_name,
-      user: env.database_user,
-      password: env.database_passsword
+      host: env.databaseHost,
+      port: Number(env.databasePort),
+      database: env.databaseName,
+      user: env.databaseUser,
+      password: env.databasePasssword
     })
   }
 
   return new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: env.databaseUrl,
     ssl: {
       rejectUnauthorized: false
     }

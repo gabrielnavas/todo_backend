@@ -7,13 +7,14 @@
     "start": "node dist/main/server.js",
     "build": "tsc -p tsconfig-build.json",
     "postinstall": "npm run build",
-    "dev": "nodemon --watch './src' --exec 'ts-node --files ./src/main/server.ts' -e ts",
-    "docker": "docker run --name todo_backend_db -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres ",
+    
+    "dev": "rm -rf dist && NODE_ENV=development && nodemon --watch './src' --exec 'ts-node --files ./src/main/server.ts' -e ts",
+    "docker:database:postgres": "docker run --name todo_backend_db -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres ",
+    
     "test": "jest --passWithNoTests --runInBand --no-cache",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
-    "test:ci": "npm test -- --coverage",
-    "deploy": "git add . && git commit -m Heroku && git push heroku main"
+    "test:ci": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",
@@ -50,6 +51,6 @@
     "validator": "^13.5.2"
   },
   "_moduleAliases": {
-    "@": "dist"
+    "@": "src"
   }
 }

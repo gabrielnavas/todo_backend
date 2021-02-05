@@ -15,7 +15,8 @@
   "include": [
     "src", 
     "src/main/configs/custom-modules.d.ts",
-    "tests"
+    "tests", 
+    "env.ts"  
   ],
   "exclude": []
 }
