@@ -26,26 +26,23 @@ implements CommunicateUserTemporaryNewPassword {
     const passwordHashed = await this.createHasherPassword.hash(passwordCreated)
     await this.insertOnePasswordTemporaryByEmail.insertOne({
       idUser: userAccount.id,
-      passwordRandom: passwordCreated
-    })
-    await this.sendEmail.sendOneEmail({
-      userName: userAccount.name,
       passwordTemporary: passwordHashed
     })
+    const paramsSendEmail = this.makeSendEmailparams(userAccount, passwordCreated)
+    await this.sendEmail.sendOneEmail(paramsSendEmail)
   }
 
-  // private makeEmailparams (
-  //   userAccount: Pick<UserAccountModel, 'name'>,
-  //   passwordTemporary: string) {
-  //   const nameUpperCase =
-  //     userAccount.name.toUpperCase()[0] +
-  //     userAccount.name.split('').splice(1).join('')
-  //   return {
-  //     text: `Hello ${nameUpperCase}.`,
-  //     html: `
-  //       <h1>Hello ${nameUpperCase}</h1>
-  //       This is your a new temporary password: ${passwordTemporary}
-  //     `
-  //   } as SendEmail.Params
-  // }
+  private makeSendEmailparams (
+    userAccount: Pick<UserAccountModel, 'name'>,
+    passwordTemporary: string) {
+    const nameUpperCase = userAccount.name.toUpperCase()[0] +
+      userAccount.name.split('').splice(1).join('')
+    return {
+      text: `Hello ${nameUpperCase}.`,
+      html: `
+        <h1>Hello ${nameUpperCase}</h1>
+        This is your a new temporary password: ${passwordTemporary}
+      `
+    } as SendEmail.Params
+  }
 }

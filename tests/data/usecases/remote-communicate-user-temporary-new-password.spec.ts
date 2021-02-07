@@ -10,20 +10,28 @@ import { makeHasherSpy } from '../mocks/mock-hasher'
 import { Hasher } from '../interfaces'
 
 const fakePasswordRandom = '@123!'
+const passwordHashed = 'any_hash'
 
 const makeCreatePasswordRandomSpy = (): CreatePasswordRandom => {
   class CreatePasswordRandomSpy implements CreatePasswordRandom {
-    createPasswordRandomWithLength (maxLength: number): string {
+    async createPasswordRandomWithLength (maxLength: number): Promise<string> {
       return fakePasswordRandom
     }
   }
   return new CreatePasswordRandomSpy()
 }
 
-const makeInsertOnePasswordTemporaryByEmail = (): InsertOnePasswordTemporaryByEmailRepository => {
-  class InsertOnePasswordTemporaryByEmailRepositorySpy implements InsertOnePasswordTemporaryByEmailRepository {
+const makeInsertOnePasswordTemporaryRepositoryByEmail = (): InsertOnePasswordTemporaryByEmailRepository => {
+  class InsertOnePasswordTemporaryByEmailRepositorySpy
+  implements InsertOnePasswordTemporaryByEmailRepository {
     async insertOne (params: InsertOnePasswordTemporaryByEmailRepository.Params):
-      Promise<void> {}
+      Promise<InsertOnePasswordTemporaryByEmailRepository.Result> {
+      return {
+        idTemporaryPassword: 1,
+        idUser: 1,
+        passwordTemporary: passwordHashed
+      }
+    }
   }
   return new InsertOnePasswordTemporaryByEmailRepositorySpy()
 }
@@ -40,7 +48,9 @@ const makeSendEmail = (): SendEmail => {
     ) {}
 
     async sendOneEmail (params: SendEmail.Params): Promise<SendEmail.Result> {
-      return null
+      return {
+        idMessageSend: 'any_message_id'
+      }
     }
   }
   const from = 'no-reply@todolist.com'
@@ -57,12 +67,10 @@ type SutTypes = {
   sendEmailSpy: SendEmail
 }
 
-const passwordHashed = 'any_hash'
-
 const makeSut = (): SutTypes => {
   const createPasswordRandomSpy = makeCreatePasswordRandomSpy()
   const hasherSpy = makeHasherSpy(passwordHashed)
-  const insertOnePasswordTemporaryByEmailRepositorySpy = makeInsertOnePasswordTemporaryByEmail()
+  const insertOnePasswordTemporaryByEmailRepositorySpy = makeInsertOnePasswordTemporaryRepositoryByEmail()
   const sendEmailSpy = makeSendEmail()
   const sut = new RemoteCommunicateUserTemporaryNewPassword(
     maxLengthPassword,
@@ -130,7 +138,7 @@ describe('RemoteCommunicateUserTemporaryNewPassword', () => {
     expect(insertOnePasswordTemporaryByEmailRepositorySpy)
       .toHaveBeenCalledWith({
         idUser: sutParams.id,
-        passwordRandom: fakePasswordRandom
+        passwordTemporary: passwordHashed
       })
   })
 
@@ -185,10 +193,15 @@ describe('RemoteCommunicateUserTemporaryNewPassword', () => {
       email: 'any_email',
       password: 'any_password'
     }
+    const nameUpperCase = sutParams.name.toUpperCase()[0] +
+      sutParams.name.split('').splice(1).join('')
     await sut.handle(sutParams)
     expect(sendEmailSpy).toHaveBeenCalledWith({
-      userName: sutParams.name,
-      passwordTemporary: passwordHashed
+      text: `Hello ${nameUpperCase}.`,
+      html: `
+        <h1>Hello ${nameUpperCase}</h1>
+        This is your a new temporary password: ${fakePasswordRandom}
+      `
     })
   })
 
