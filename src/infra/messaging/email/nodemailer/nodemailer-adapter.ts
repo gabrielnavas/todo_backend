@@ -1,6 +1,6 @@
 
 import { SendEmail } from '@/data/interfaces/send-email'
-import { clientEmail } from './helpers/client-email'
+import { clientEmail } from './client-email'
 
 export class NodeMailerAdapter implements SendEmail {
   constructor (

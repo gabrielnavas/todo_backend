@@ -10,7 +10,6 @@ type Params = {
 }
 
 export const clientEmail = (params: Params) => {
-  // const testAccount = await nodemailer.createTestAccount()
   const client = nodemailer.createTransport({
     host: params.host,
     port: params.port,

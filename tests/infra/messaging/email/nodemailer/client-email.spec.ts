@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 
-import { clientEmail } from '@/infra/messaging/email/nodemailer/helpers/client-email'
+import { clientEmail } from '@/infra/messaging/email/nodemailer/client-email'
 
 describe('clientEmail - nodemailer', () => {
   test('should instance is true', async () => {
@@ -13,6 +13,6 @@ describe('clientEmail - nodemailer', () => {
       host: 'smtp.ethereal.email',
       port: 587
     })
-    expect(client).toEqual({})
+    expect(client).toBeTruthy()
   })
 })
