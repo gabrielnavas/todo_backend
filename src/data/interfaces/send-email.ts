@@ -4,11 +4,8 @@ export interface SendEmail {
 
 export namespace SendEmail {
   export type Params = {
-    from: string
-    to: string[]
-    subject: string
-    text?: string
-    html?: string
+    userName: string,
+    passwordTemporary: string
   }
 
   export type Result = Error

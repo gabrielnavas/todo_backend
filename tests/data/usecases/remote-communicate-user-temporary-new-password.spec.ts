@@ -1,146 +1,220 @@
+import {
+  CreatePasswordRandom
+} from '@/data/interfaces/create-password-random'
+import {
+  RemoteCommunicateUserTemporaryNewPassword
+} from '@/data/usecases/remote-communicate-user-temporary-new-password'
+import { InsertOnePasswordTemporaryByEmailRepository } from '@/data/interfaces/insert-one-password-temporary-by-email-repository'
+import { SendEmail } from '@/data/interfaces/send-email'
+import { makeHasherSpy } from '../mocks/mock-hasher'
+import { Hasher } from '../interfaces'
 
-// const makeSendEmail = (): SendEmail => {
-//   class SendEmailSpy implements SendEmail {
-//     async sendOneEmail (params: SendEmail.Params): Promise<SendEmail.Result> {
-//       return null
-//     }
-//   }
-//   return new SendEmailSpy()
-// }
+const fakePasswordRandom = '@123!'
 
-// const makeInsertOnePasswordTemporaryByEmail = (): InsertOnePasswordTemporaryByEmail => {
-//   class InsertOnePasswordTemporaryByEmailSpy implements InsertOnePasswordTemporaryByEmail {
-//     async insertOne (password: string): Promise<void> { }
-//   }
-//   return new InsertOnePasswordTemporaryByEmailSpy()
-// }
+const makeCreatePasswordRandomSpy = (): CreatePasswordRandom => {
+  class CreatePasswordRandomSpy implements CreatePasswordRandom {
+    createPasswordRandomWithLength (maxLength: number): string {
+      return fakePasswordRandom
+    }
+  }
+  return new CreatePasswordRandomSpy()
+}
 
-// const fakePasswordRandom = '@123!'
+const makeInsertOnePasswordTemporaryByEmail = (): InsertOnePasswordTemporaryByEmailRepository => {
+  class InsertOnePasswordTemporaryByEmailRepositorySpy implements InsertOnePasswordTemporaryByEmailRepository {
+    async insertOne (params: InsertOnePasswordTemporaryByEmailRepository.Params):
+      Promise<void> {}
+  }
+  return new InsertOnePasswordTemporaryByEmailRepositorySpy()
+}
 
-// const makeCreatePasswordRandomSpy = (): CreatePasswordRandom => {
-//   class CreatePasswordRandomSpy implements CreatePasswordRandom {
-//     handle (maxLength: number): string {
-//       return fakePasswordRandom
-//     }
-//   }
-//   return new CreatePasswordRandomSpy()
-// }
+const maxLengthPassword = 8
+const userEmail = 'any_email'
+
+const makeSendEmail = (): SendEmail => {
+  class SendEmailSpy implements SendEmail {
+    constructor (
+      private readonly from: string,
+      private readonly to: string[],
+      private readonly subject: string
+    ) {}
+
+    async sendOneEmail (params: SendEmail.Params): Promise<SendEmail.Result> {
+      return null
+    }
+  }
+  const from = 'no-reply@todolist.com'
+  const to = [userEmail]
+  const subject = 'Your title'
+  return new SendEmailSpy(from, to, subject)
+}
+
+type SutTypes = {
+  sut: RemoteCommunicateUserTemporaryNewPassword
+  createPasswordRandomSpy: CreatePasswordRandom
+  hasherSpy: Hasher
+  insertOnePasswordTemporaryByEmailRepositorySpy: InsertOnePasswordTemporaryByEmailRepository
+  sendEmailSpy: SendEmail
+}
+
+const passwordHashed = 'any_hash'
 
 const makeSut = (): SutTypes => {
-  // const sendEmailSpy = makeSendEmail()
-  // const insertOnePasswordTemporaryByEmailSpy = makeInsertOnePasswordTemporaryByEmail()
-  // const createPasswordRandomSpy = makeCreatePasswordRandomSpy()
-  const communicateUserTemporaryNewPasswordSpy = makeCommunicateUserTemporaryNewPassword()
-  const loadUserAccontByEmailSpy = makeLoadUserAccontByEmail()
-  const validationSpy = new ValidationSpy()
-  const sut = new RecuperateUserAccountController(
-    validationSpy,
-    loadUserAccontByEmailSpy,
-    communicateUserTemporaryNewPasswordSpy
-    // createPasswordRandomSpy,
-    // insertOnePasswordTemporaryByEmailSpy,
-    // sendEmailSpy
+  const createPasswordRandomSpy = makeCreatePasswordRandomSpy()
+  const hasherSpy = makeHasherSpy(passwordHashed)
+  const insertOnePasswordTemporaryByEmailRepositorySpy = makeInsertOnePasswordTemporaryByEmail()
+  const sendEmailSpy = makeSendEmail()
+  const sut = new RemoteCommunicateUserTemporaryNewPassword(
+    maxLengthPassword,
+    createPasswordRandomSpy,
+    hasherSpy,
+    insertOnePasswordTemporaryByEmailRepositorySpy,
+    sendEmailSpy
   )
   return {
     sut,
-    validationSpy,
-    loadUserAccontByEmailSpy,
-    communicateUserTemporaryNewPasswordSpy
-    // createPasswordRandomSpy,
-    // insertOnePasswordTemporaryByEmailSpy,
-    // sendEmailSpy
+    createPasswordRandomSpy,
+    hasherSpy,
+    insertOnePasswordTemporaryByEmailRepositorySpy,
+    sendEmailSpy
   }
 }
 
 describe('RemoteCommunicateUserTemporaryNewPassword', () => {
-  test('should ', () => {
+  test('should call CreatePasswordRandomSpy with correct maxLengthPassword if user exists', async () => {
+    const {
+      sut,
+      createPasswordRandomSpy: createPasswordRandom
+    } = makeSut()
+    const createPasswordRandomSpy = jest.spyOn(createPasswordRandom, 'createPasswordRandomWithLength')
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.handle(sutParams)
 
+    expect(createPasswordRandomSpy)
+      .toHaveBeenCalledWith(maxLengthPassword)
   })
 
-  // test('should call CreatePasswordRandomSpy if user exists', async () => {
-  //   const { sut, createPasswordRandomSpy: createPasswordRandom } = makeSut()
-  //   const createPasswordRandomSpy = jest.spyOn(createPasswordRandom, 'handle')
-  //   const httpRequest = {
-  //     email: 'any_email'
-  //   } as RecuperateUserAccountController.HttpRequest
-  //   await sut.handle(httpRequest)
-  //   const maxLengthPassword = 8
-  //   expect(createPasswordRandomSpy)
-  //     .toHaveBeenCalledWith(maxLengthPassword)
-  // })
+  test('should retun throw if CreatePasswordRandomSpy throws', () => {
+    const { sut, createPasswordRandomSpy } = makeSut()
+    jest.spyOn(createPasswordRandomSpy, 'createPasswordRandomWithLength')
+      .mockRejectedValue(new Error('any_error'))
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const promise = sut.handle(sutParams)
+    expect(promise).rejects.toThrow(new Error('any_error'))
+  })
 
-  // test('should not call CreatePasswordRandomSpy if not found user ', async () => {
-  //   const {
-  //     sut,
-  //     createPasswordRandomSpy: createPasswordRandom,
-  //     loadUserAccontByEmailSpy
-  //   } = makeSut()
-  //   jest.spyOn(loadUserAccontByEmailSpy, 'loadByEmail')
-  //     .mockRejectedValueOnce(null)
-  //   const createPasswordRandomSpy = jest.spyOn(createPasswordRandom, 'handle')
-  //   const httpRequest = {
-  //     email: 'any_email'
-  //   } as RecuperateUserAccountController.HttpRequest
-  //   await sut.handle(httpRequest)
-  //   expect(createPasswordRandomSpy).toHaveLength(0)
-  // })
+  test('should call InsertOnePasswordTemporaryByEmail if user found', async () => {
+    const {
+      sut,
+      insertOnePasswordTemporaryByEmailRepositorySpy: insertOnePasswordTemporaryByEmailRepository
+    } = makeSut()
+    const insertOnePasswordTemporaryByEmailRepositorySpy = jest
+      .spyOn(insertOnePasswordTemporaryByEmailRepository, 'insertOne')
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.handle(sutParams)
+    expect(insertOnePasswordTemporaryByEmailRepositorySpy)
+      .toHaveBeenCalledWith({
+        idUser: sutParams.id,
+        passwordRandom: fakePasswordRandom
+      })
+  })
 
-  // test('should call InsertOnePasswordTemporaryByEmail if user found', async () => {
-  //   const {
-  //     sut,
-  //     insertOnePasswordTemporaryByEmailSpy: insertOnePasswordTemporaryByEmail
-  //   } = makeSut()
-  //   const insertOnePasswordTemporaryByEmailSpy = jest
-  //     .spyOn(insertOnePasswordTemporaryByEmail, 'insertOne')
-  //   const httpRequest = {
-  //     email: 'any_email'
-  //   } as RecuperateUserAccountController.HttpRequest
-  //   await sut.handle(httpRequest)
-  //   expect(insertOnePasswordTemporaryByEmailSpy)
-  //     .toHaveBeenCalledWith(fakePasswordRandom)
-  // })
+  test('should call hasher with correct password', async () => {
+    const { sut, hasherSpy: hasher } = makeSut()
+    const hasherSpy = jest.spyOn(hasher, 'hash')
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.handle(sutParams)
+    expect(hasherSpy).toHaveBeenCalledWith(fakePasswordRandom)
+  })
 
-  // test('should return serverError 500 if InsertOnePasswordTemporaryByEmail throws', async () => {
-  //   const { sut, insertOnePasswordTemporaryByEmailSpy } = makeSut()
-  //   jest.spyOn(insertOnePasswordTemporaryByEmailSpy, 'insertOne')
-  //     .mockRejectedValueOnce(new Error('any_error'))
-  //   const httpRequest = { email: 'any_email' } as RecuperateUserAccountController.HttpRequest
-  //   const httpResponse = await sut.handle(httpRequest)
-  //   expect(httpResponse).toEqual(httpResponseServerError(new UnexpectedError()))
-  // })
+  test('should return throw if hasher throws', async () => {
+    const { sut, hasherSpy: hasher } = makeSut()
+    jest.spyOn(hasher, 'hash').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const promise = sut.handle(sutParams)
+    expect(promise).rejects.toThrow(new Error())
+  })
 
-  // test('should dont call InsertOnePasswordTemporaryByEmail if user not found', async () => {
-  //   const {
-  //     sut,
-  //     insertOnePasswordTemporaryByEmailSpy: insertOnePasswordTemporaryByEmail,
-  //     loadUserAccontByEmailSpy
-  //   } = makeSut()
-  //   jest.spyOn(loadUserAccontByEmailSpy, 'loadByEmail')
-  //     .mockRejectedValueOnce(null)
-  //   const insertOnePasswordTemporaryByEmailSpy = jest
-  //     .spyOn(insertOnePasswordTemporaryByEmail, 'insertOne')
-  //   const httpRequest = {
-  //     email: 'any_email'
-  //   } as RecuperateUserAccountController.HttpRequest
-  //   await sut.handle(httpRequest)
-  //   expect(insertOnePasswordTemporaryByEmailSpy)
-  //     .toHaveLength(0)
-  // })
+  test('should return throws if InsertOnePasswordTemporaryByEmail throws', async () => {
+    const { sut, insertOnePasswordTemporaryByEmailRepositorySpy } = makeSut()
+    jest.spyOn(insertOnePasswordTemporaryByEmailRepositorySpy, 'insertOne')
+      .mockRejectedValueOnce(new Error('any_error'))
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const promise = sut.handle(sutParams)
+    expect(promise).rejects.toThrow(new Error('any_error'))
+  })
 
-  // test('should call SendEmail with correct params if user found', async () => {
-  //   const { sut, sendEmailSpy: sendEmail } = makeSut()
-  //   const sendEmailSpy = jest.spyOn(sendEmail, 'sendOneEmail')
-  //   const httpRequest = {
-  //     email: 'any_email'
-  //   } as RecuperateUserAccountController.HttpRequest
-  //   await sut.handle(httpRequest)
-  //   const paramsSendEmail = {
-  //     from: 'any_email@email.com',
-  //     to: ['any_email01@email.com', 'any_email02@email.com', 'any_email03@email.com'],
-  //     subject: 'any_subject',
-  //     text: 'any_text',
-  //     html: '<h1>any_html</h1>'
-  //   } as SendEmail.Params
-  //   expect(sendEmailSpy).toHaveBeenCalledWith(paramsSendEmail)
-  // })
+  test('should call SendEmail with correct params if user found', async () => {
+    const { sut, sendEmailSpy: sendEmail } = makeSut()
+    const sendEmailSpy = jest.spyOn(sendEmail, 'sendOneEmail')
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.handle(sutParams)
+    expect(sendEmailSpy).toHaveBeenCalledWith({
+      userName: sutParams.name,
+      passwordTemporary: passwordHashed
+    })
+  })
+
+  test('should return throws if SendEmail throws', () => {
+    const { sut, sendEmailSpy } = makeSut()
+    jest.spyOn(sendEmailSpy, 'sendOneEmail')
+      .mockRejectedValueOnce(new Error('any_error'))
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const promise = sut.handle(sutParams)
+    expect(promise).rejects.toThrow()
+  })
+
+  test('should return void if ok', async () => {
+    const { sut } = makeSut()
+    const sutParams = {
+      id: 1,
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const response = await sut.handle(sutParams)
+    expect(response).toEqual(undefined)
+  })
 })
