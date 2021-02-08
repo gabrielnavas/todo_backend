@@ -2,44 +2,52 @@
 import { SendEmail } from '@/data/interfaces/send-email'
 import { clientEmail } from './client-email'
 
-export class NodeMailerAdapter implements SendEmail {
-  constructor (
-    private auth: {
+import nodemailer from 'nodemailer'
+
+export namespace NodeMailerAdapter {
+  export type Params = {
+    auth: {
       user: string,
-      pass: string
+      password: string
     },
-    private host: string,
-    private port: number,
-    private readonly from:{
+    host: string,
+    port: number,
+    to:string[],
+    from:{
       name: string,
       email: string
     },
-    private readonly to:string[],
-    private readonly subject:string
+    subject:string
+  }
+}
+
+export class NodeMailerAdapter implements SendEmail {
+  constructor (
+    private readonly paramsInstance: NodeMailerAdapter.Params
+
   ) {}
 
   async sendOneEmail (params: SendEmail.Params): Promise<SendEmail.Result> {
     const client = await clientEmail({
       auth: {
-        user: this.auth.user,
-        password: this.auth.pass
+        user: this.paramsInstance.auth.user,
+        password: this.paramsInstance.auth.password
       },
-      host: this.host,
-      port: this.port
+      host: this.paramsInstance.host,
+      port: this.paramsInstance.port
     })
 
-    const toJoin = this.to.reduce((toStr, toItem, index) =>
+    const toJoin = this.paramsInstance.to.reduce((toStr, toItem, index) =>
       (index === 0) ? toItem : `${toStr}, ${toItem}`
     , '')
-
     const info = await client.sendMail({
-      from: `"${this.from.name}" <${this.from.email}>`,
+      from: `"${this.paramsInstance.from.name}" <${this.paramsInstance.from.email}>`,
       to: toJoin,
-      subject: this.subject,
+      subject: this.paramsInstance.subject,
       text: params.text,
       html: params.text
     })
-
-    return info.messageID
+    console.log('preview: ', nodemailer.getTestMessageUrl(info))
+    return info.messageId
   }
 }
