@@ -53,6 +53,6 @@
     "validator": "^13.5.2"
   },
   "_moduleAliases": {
-    "@": "src"
+    "@": "dist"
   }
 }
