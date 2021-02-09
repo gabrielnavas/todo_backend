@@ -22,7 +22,7 @@ export default {
   sendEmailPassword: process.env.SEND_EMAIL_PASSWORD,
   sendEmailUser: process.env.SEND_EMAIL_USER,
   sendEmailPort: Number(process.env.SEND_EMAIL_PORT),
-  sendEmailService: process.env.SEND_EMAIL_SERVICCE,
+  sendEmailService: process.env.SEND_EMAIL_SERVICE,
 
   nodeEnv: process.env.NODE_ENV || 'development'
 }
