@@ -6,12 +6,14 @@ import { PGHelper } from '@/infra/db/postgresql/helpers/pg-helper'
 describe('POST /insert_todo_item', () => {
   describe('Expect success 200', () => {
     beforeEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
 
     afterEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
@@ -44,12 +46,14 @@ describe('POST /insert_todo_item', () => {
 
   describe('Expect 400 badRequest', () => {
     beforeEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
 
     afterEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
@@ -130,12 +134,14 @@ describe('POST /insert_todo_item', () => {
 
   describe('Expect 401 forbidden', () => {
     beforeEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')
     })
 
     afterEach(async () => {
+      await PGHelper.getPool().query('DELETE FROM public."user_temporary_password" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user_token_access" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."todo_item" CASCADE')
       await PGHelper.getPool().query('DELETE FROM public."user" CASCADE')

@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer'
 
 import { clientEmail } from '@/infra/messaging/email/nodemailer/client-email'
 
+jest.setTimeout(30000)
+
 describe('clientEmail - nodemailer', () => {
   test('should instance is true', async () => {
     const testAccount = await nodemailer.createTestAccount()

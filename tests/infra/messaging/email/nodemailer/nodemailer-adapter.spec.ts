@@ -17,11 +17,12 @@ describe('NodeMailerAdapter', () => {
         name: 'gabriel',
         email: 'any_email@email.com'
       },
-      subject: 'any_tests',
-      to: ['votena3613@hancack.com']
+      subject: 'any_tests'
+
     } as NodeMailerAdapter.Params
     const sut = new NodeMailerAdapter(params)
     const messageID = await sut.sendOneEmail({
+      to: ['votena3613@hancack.com'],
       html: '<h1>hello young</h1>',
       text: 'hello young'
     })

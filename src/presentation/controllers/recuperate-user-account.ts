@@ -2,8 +2,8 @@ import {
   CommunicateUserTemporaryNewPassword
 } from '@/domain/usecases/communicate-user-temporary-password'
 import {
-  LoadUserAccontByEmail
-} from '@/domain/usecases/load-user-accont-by-email'
+  LoadUserAccountByEmail
+} from '@/domain/usecases/load-user-account-by-email'
 import {
   httpResponseBadRequest,
   httpResponseOk,
@@ -14,7 +14,7 @@ import { Controller, HttpResponse, Validation } from '../interfaces'
 export class RecuperateUserAccountController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly verifyExistsEmail: LoadUserAccontByEmail,
+    private readonly verifyExistsEmail: LoadUserAccountByEmail,
     private readonly communicateUserTemporaryNewPassword: CommunicateUserTemporaryNewPassword
   ) {}
 

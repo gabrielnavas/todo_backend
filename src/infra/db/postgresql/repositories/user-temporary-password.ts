@@ -7,7 +7,7 @@ implements InsertOnePasswordTemporaryByEmailRepository {
     Promise<InsertOnePasswordTemporaryByEmailRepository.Result> {
     const { idUser, passwordTemporary } = params
     const sql = `
-      INSERT INTO public.user_temporary_password (
+      INSERT INTO public."user_temporary_password" (
         id_user,
         password
       ) VALUES (

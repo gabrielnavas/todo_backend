@@ -190,7 +190,7 @@ describe('RemoteCommunicateUserTemporaryNewPassword', () => {
     const sutParams = {
       id: 1,
       name: 'any_name',
-      email: 'any_email',
+      email: 'any_email@email.com',
       password: 'any_password'
     }
     const nameUpperCase = sutParams.name.toUpperCase()[0] +
@@ -201,7 +201,8 @@ describe('RemoteCommunicateUserTemporaryNewPassword', () => {
       html: `
         <h1>Hello ${nameUpperCase}</h1>
         This is your a new temporary password: ${fakePasswordRandom}
-      `
+      `,
+      to: ['any_email@email.com']
     })
   })
 

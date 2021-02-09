@@ -22,8 +22,10 @@ implements CommunicateUserTemporaryNewPassword {
   ) {}
 
   async handle (userAccount: UserAccountModel): Promise<void> {
-    const passwordCreated = await this.createPasswordRandom.createPasswordRandomWithLength(this.maxLengthPassword)
-    const passwordHashed = await this.createHasherPassword.hash(passwordCreated)
+    const passwordCreated = await this.createPasswordRandom
+      .createPasswordRandomWithLength(this.maxLengthPassword)
+    const passwordHashed = await this.createHasherPassword
+      .hash(passwordCreated)
     await this.insertOnePasswordTemporaryByEmail.insertOne({
       idUser: userAccount.id,
       passwordTemporary: passwordHashed
@@ -33,11 +35,12 @@ implements CommunicateUserTemporaryNewPassword {
   }
 
   private makeSendEmailparams (
-    userAccount: Pick<UserAccountModel, 'name'>,
+    userAccount: Pick<UserAccountModel, 'name' | 'email'>,
     passwordTemporary: string) {
     const nameUpperCase = userAccount.name.toUpperCase()[0] +
       userAccount.name.split('').splice(1).join('')
     return {
+      to: [userAccount.email],
       text: `Hello ${nameUpperCase}.`,
       html: `
         <h1>Hello ${nameUpperCase}</h1>

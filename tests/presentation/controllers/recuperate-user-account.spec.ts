@@ -4,12 +4,12 @@ import { RecuperateUserAccountController } from '@/presentation/controllers/recu
 import { MissingParamError, UnexpectedError } from '@/presentation/errors'
 import { httpResponseBadRequest, httpResponseOk, httpResponseServerError } from '@/presentation/helpers/http-helper'
 import { UserAccountModel } from '@/domain/models/user-account'
-import { LoadUserAccontByEmail } from '@/domain/usecases/load-user-accont-by-email'
+import { LoadUserAccountByEmail } from '@/domain/usecases/load-user-account-by-email'
 import { CommunicateUserTemporaryNewPassword } from '@/domain/usecases/communicate-user-temporary-password'
 
-const makeLoadUserAccontByEmail = (): LoadUserAccontByEmail => {
-  class LoadUserAccontByEmailSpy implements LoadUserAccontByEmail {
-    loadByEmail (params: LoadUserAccontByEmail.Params): Promise<LoadUserAccontByEmail.Result> {
+const makeLoadUserAccontByEmail = (): LoadUserAccountByEmail => {
+  class LoadUserAccontByEmailSpy implements LoadUserAccountByEmail {
+    loadByEmail (params: LoadUserAccountByEmail.Params): Promise<LoadUserAccountByEmail.Result> {
       return Promise.resolve({
         id: 1,
         email: 'any_email',
@@ -32,7 +32,7 @@ const makeCommunicateUserTemporaryNewPassword = (): CommunicateUserTemporaryNewP
 type SutTypes = {
   sut: Controller,
   validationSpy : Validation
-  loadUserAccontByEmailSpy: LoadUserAccontByEmail
+  loadUserAccontByEmailSpy: LoadUserAccountByEmail
   communicateUserTemporaryNewPasswordSpy: CommunicateUserTemporaryNewPassword
 }
 

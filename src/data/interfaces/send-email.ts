@@ -5,7 +5,8 @@ export interface SendEmail {
 export namespace SendEmail {
   export type Params = {
     text: string,
-    html: string
+    html: string,
+    to:string[],
   }
 
   export type Result = {
