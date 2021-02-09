@@ -17,5 +17,12 @@ export default {
   // encrypter key
   jwtKeySecret: process.env.JWT_KEY_SECRET || 'im a key secret',
 
+  // send email
+  sendEmailHost: process.env.SEND_EMAIL_HOST,
+  sendEmailPassword: process.env.SEND_EMAIL_PASSWORD,
+  sendEmailUser: process.env.SEND_EMAIL_USER,
+  sendEmailPort: Number(process.env.SEND_EMAIL_PORT),
+  sendEmailService: process.env.SEND_EMAIL_SERVICCE,
+
   nodeEnv: process.env.NODE_ENV || 'development'
 }

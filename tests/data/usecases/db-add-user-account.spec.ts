@@ -2,6 +2,7 @@ import { DbCreateUserAccount } from '@/data/usecases/db-create-user-account'
 import { CreateUserAccount } from '@/domain/usecases/create-user-account'
 import { FindOneUserByEmailRepository, InsertOneUserRepository } from '@/data/interfaces'
 import { Hasher } from '@/data/interfaces/hasher'
+import { makeHasherSpy } from '../mocks/mock-hasher'
 
 const makeUserRepository = () => {
   class UserRepositorySpy implements
@@ -25,15 +26,6 @@ const makeUserRepository = () => {
 
 const passwordHashed = 'any_password_hash'
 
-const makeHasherSpy = (): Hasher => {
-  class HasherSpy implements Hasher {
-    async hash (plaintext: Hasher.Params): Promise<Hasher.Result> {
-      return passwordHashed
-    }
-  }
-  return new HasherSpy()
-}
-
 interface SutTypes {
   sut: CreateUserAccount
   hasherSpy: Hasher
@@ -42,7 +34,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const userRepositorySpy = makeUserRepository()
-  const hasherSpy = makeHasherSpy()
+  const hasherSpy = makeHasherSpy(passwordHashed)
   const sut = new DbCreateUserAccount(
     hasherSpy,
     userRepositorySpy,
@@ -56,18 +48,6 @@ const makeSut = (): SutTypes => {
 }
 
 describe('CreateUserAccount', () => {
-  test('should call hasher with correct password', async () => {
-    const { sut, hasherSpy: hasher } = makeSut()
-    const hasherSpy = jest.spyOn(hasher, 'hash')
-    const userParams = {
-      email: 'any_email',
-      name: 'any_name',
-      password: 'any_password'
-    }
-    await sut.createUser(userParams)
-    expect(hasherSpy).toHaveBeenCalledWith(userParams.password)
-  })
-
   test('should call hasher with correct password', async () => {
     const { sut, hasherSpy: hasher } = makeSut()
     const hasherSpy = jest.spyOn(hasher, 'hash')

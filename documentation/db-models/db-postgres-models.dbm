@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" last-position="16,0" last-zoom="1" max-obj-count="4"
+<dbmodel pgmodeler-ver="0.9.3-beta1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="4"
 	 default-schema="public" default-owner="postgres">
 <database name="todo" encoding="UTF8" lc-collate="en_US.utf8" lc-ctype="en_US.utf8" is-template="false" allow-conns="true">
 	<role name="postgres"/>
@@ -22,7 +22,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="user" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="119" y="243"/>
+	<position x="242" y="93"/>
 	<column name="id" not-null="true" sequence="public.user_id_seq">
 		<type name="integer" length="0"/>
 	</column>
@@ -43,7 +43,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="user_token_access" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="557" y="327"/>
+	<position x="87" y="372"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -80,7 +80,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="todo_item" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="559" y="34"/>
+	<position x="690" y="98"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -104,6 +104,37 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="public.&quot;user&quot;"
 	 dst-table="public.todo_item"
+	 src-required="true" dst-required="false"/>
+
+<table name="user_temporary_password" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="427" y="378"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="varchar" length="72"/>
+	</column>
+	<constraint name="temporary_passwords_pk" type="pk-constr" table="public.user_temporary_password">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_user" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="user_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="user_has_many_temporary_passwords" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.&quot;user&quot;"
+	 dst-table="public.user_temporary_password"
 	 src-required="true" dst-required="false"/>
 
 <permission>

@@ -117,7 +117,7 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(httpResponseBadRequest(new EmailInUseError()))
   })
 
-  test('should call Authenticationer with correct params', async () => {
+  test('should call Authentication with correct params', async () => {
     const { sut, authenticationSpy: authentication } = makeSut()
     const authenticationSpy = jest.spyOn(authentication, 'authenticate')
     const httpRequest = {
@@ -132,7 +132,7 @@ describe('SignUpController', () => {
     expect(authenticationSpy).toHaveBeenCalledWith({ email, password })
   })
 
-  test('should return 500 throw Authenticationer if throws', async () => {
+  test('should return 500 throw Authentication if throws', async () => {
     const { sut, authenticationSpy } = makeSut()
     jest.spyOn(authenticationSpy, 'authenticate').mockImplementationOnce(() => {
       throw new Error()
