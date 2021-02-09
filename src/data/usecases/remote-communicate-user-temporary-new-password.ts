@@ -44,7 +44,7 @@ implements CommunicateUserTemporaryNewPassword {
       text: `Hello ${nameUpperCase}.`,
       html: `
         <h1>Hello ${nameUpperCase}</h1>
-        This is your a new temporary password: ${passwordTemporary}
+        This is your a new temporary password: <strong>${passwordTemporary}</strong>
       `
     } as SendEmail.Params
   }

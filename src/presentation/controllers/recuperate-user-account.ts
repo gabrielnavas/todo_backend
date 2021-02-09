@@ -32,7 +32,7 @@ export class RecuperateUserAccountController implements Controller {
         await this.communicateUserTemporaryNewPassword.handle(userAccountFound)
       }
       return httpResponseOk()
-    } catch {
+    } catch (error) {
       return httpResponseServerError()
     }
   }
